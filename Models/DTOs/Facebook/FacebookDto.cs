@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace Models.DTOs.Facebook
 {
 	public class FacebookDto
 	{
-
+		public FacebookUserData FacebookUserData { get; set; }
+		public FacebookPictureData FacebookPictureData { get; set; }
+		public FacebookPicture FacebookPicture { get; set; }
+		public FacebookUserAccessTokenData FacebookUserAccessTokenData { get; set; }
+		public FacebookUserAccessTokenValidation FacebookUserAccessTokenValidation { get; set; }
+		public FacebookAppAccessToken FacebookAppAccessToken { get; set; }
 	}
 	public class FacebookUserData
 	{
 		public long Id { get; set; }
 		public string Email { get; set; }
 		public string Name { get; set; }
-		[JsonProperty("first_name")]
+		[JsonPropertyName("first_name")]
 		public string FirstName { get; set; }
-		[JsonProperty("last_name")]
+		[JsonPropertyName("last_name")]
 		public string LastName { get; set; }
 		public string Gender { get; set; }
 		public string Locale { get; set; }
@@ -31,22 +36,22 @@ namespace Models.DTOs.Facebook
 	{
 		public int Height { get; set; }
 		public int Width { get; set; }
-		[JsonProperty("is_silhouette")]
+		[JsonPropertyName("is_silhouette")]
 		public bool IsSilhouette { get; set; }
 		public string Url { get; set; }
 	}
 
 	public class FacebookUserAccessTokenData
 	{
-		[JsonProperty("app_id")]
+		[JsonPropertyName("app_id")]
 		public long AppId { get; set; }
 		public string Type { get; set; }
 		public string Application { get; set; }
-		[JsonProperty("expires_at")]
+		[JsonPropertyName("expires_at")]
 		public long ExpiresAt { get; set; }
-		[JsonProperty("is_valid")]
+		[JsonPropertyName("is_valid")]
 		public bool IsValid { get; set; }
-		[JsonProperty("user_id")]
+		[JsonPropertyName("user_id")]
 		public long UserId { get; set; }
 	}
 
@@ -57,9 +62,9 @@ namespace Models.DTOs.Facebook
 
 	public class FacebookAppAccessToken
 	{
-		[JsonProperty("token_type")]
+		[JsonPropertyName("token_type")]
 		public string TokenType { get; set; }
-		[JsonProperty("access_token")]
+		[JsonPropertyName("access_token")]
 		public string AccessToken { get; set; }
 	}
 }
