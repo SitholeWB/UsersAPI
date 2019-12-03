@@ -14,15 +14,31 @@ namespace Models.Entities
 	{
 		[MaxLength(350)]//https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
 		[Required]
-		public string Email { get; set; }
+		public string Email
+		{
+			get { return Email_Private?.ToLower(); }
+			set
+			{
+				Email_Private = value;
+			}
+		}
 		[MaxLength(200)]
 		[Required]
-		public string Username { get; set; }
+		public string Username
+		{
+			get { return Username_Private?.ToLower(); }
+			set
+			{
+				Username_Private = value;
+			}
+		}
 		[MaxLength(5000)]
 		public string Password { get; set; }
 		[MaxLength(200)]
 		[Required]
 		public string Name { get; set; }
+		[MaxLength(50)]
+		public string Gender { get; set; }
 		[MaxLength(200)]
 		[Required]
 		public string Surname { get; set; }
@@ -54,5 +70,11 @@ namespace Models.Entities
 		[NotMapped]
 		[JsonIgnore]
 		private string AccountAuth_Private { get; set; }
+		[NotMapped]
+		[JsonIgnore]
+		private string Email_Private { get; set; }
+		[NotMapped]
+		[JsonIgnore]
+		private string Username_Private { get; set; }
 	}
 }

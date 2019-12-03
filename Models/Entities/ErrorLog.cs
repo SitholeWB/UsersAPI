@@ -9,6 +9,9 @@ namespace Models.Entities
 	[Table("ErrorLogs")]
 	public class ErrorLog : BaseEntity
 	{
+		[MaxLength(100)]
+		[Required]
+		public string Type { get; set; }
 		[MaxLength(5000)]
 		[Required]
 		public string Message { get; set; }

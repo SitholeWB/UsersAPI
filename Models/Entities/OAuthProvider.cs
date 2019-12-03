@@ -11,7 +11,10 @@ namespace Models.Entities
 	{
 		[MaxLength(100)]
 		[Required]
-		public string Name { get; set; }
+		public string ProviderName { get; set; }
+		[MaxLength(350)]//https://stackoverflow.com/questions/386294/what-is-the-maximum-length-of-a-valid-email-address
+		[Required]
+		public string Email { get; set; }
 		[MaxLength(int.MaxValue)]
 		public string DataJson { get; set; }
 	}

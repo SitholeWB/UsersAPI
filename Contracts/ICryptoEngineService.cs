@@ -4,7 +4,9 @@ using System.Text;
 
 namespace Contracts
 {
-	class ICryptoEngineService
+	public interface ICryptoEngineService
 	{
+		string Encrypt(string plainText);
+		string Decrypt(string cipherText);
 	}
 }

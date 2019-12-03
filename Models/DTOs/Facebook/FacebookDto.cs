@@ -12,11 +12,19 @@ namespace Models.DTOs.Facebook
 		public FacebookUserAccessTokenData FacebookUserAccessTokenData { get; set; }
 		public FacebookUserAccessTokenValidation FacebookUserAccessTokenValidation { get; set; }
 		public FacebookAppAccessToken FacebookAppAccessToken { get; set; }
+		public FacebookAuthViewModel FacebookAuthViewModel { get; set; }
 	}
 	public class FacebookUserData
 	{
 		public long Id { get; set; }
-		public string Email { get; set; }
+		public string Email
+		{
+			get { return Email_Private?.ToLower(); }
+			set
+			{
+				Email_Private = value;
+			}
+		}
 		public string Name { get; set; }
 		[JsonPropertyName("first_name")]
 		public string FirstName { get; set; }
@@ -25,6 +33,9 @@ namespace Models.DTOs.Facebook
 		public string Gender { get; set; }
 		public string Locale { get; set; }
 		public FacebookPictureData Picture { get; set; }
+
+		[JsonIgnore]
+		private string Email_Private { get; set; }
 	}
 
 	public class FacebookPictureData
