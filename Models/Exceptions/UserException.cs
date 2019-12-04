@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Models.Enums;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -10,16 +11,16 @@ namespace Models.Exceptions
 		public int ErrorCode { get; set; }
 		public string Code { get; set; }
 		public Exception Exception { get; set; }
-		public UserException(string message, int code) : base(message)
+		public UserException(string message, ErrorCodes code) : base(message)
 		{
-			Code = $"UEX_{code}";
-			ErrorCode = code;
+			Code = $"UEX_{(int)code}";
+			ErrorCode = (int)code;
 		}
-		public UserException(string message, int code, Exception exception):this(message, code)
+		public UserException(string message, ErrorCodes code, Exception exception):this(message, code)
 		{
-			Code = $"UEX_{code}";
+			Code = $"UEX_{(int)code}";
 			Exception = exception;
-			ErrorCode = code;
+			ErrorCode = (int)code;
 		}
 	}
 }

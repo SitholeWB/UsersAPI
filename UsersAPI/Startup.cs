@@ -1,28 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Models.Settings;
 using Services;
 using Services.DataLayer;
-using Swashbuckle.AspNetCore.Swagger;
 using UsersAPI.Exceptions;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Identity;
 
 namespace UsersAPI
 {
@@ -46,19 +37,24 @@ namespace UsersAPI
 						builder
 						.AllowAnyOrigin()
 						.AllowAnyMethod()
-						.AllowAnyHeader()
-						.AllowCredentials();
+						.AllowAnyHeader();
 					});
 			});
 
 			services.AddSwaggerGen(c =>
 			{
-				c.SwaggerDoc("v1", new Info { Title = "Users API", Version = "v1" });
+				c.SwaggerDoc("v1", new OpenApiInfo
+				{
+					Title = "Users API",
+					Version = "v1",
+					Contact = new OpenApiContact
+					{
+						Name = "Welcome Sithole" ,
+						Url = new Uri("https://github.com/SitholeWB")
+					},
+					Description = "Talk is cheap. Show me the code. - Torvalds, Linus (2000-08-25)."
+				});
 			});
-
-			services.AddDefaultIdentity<IdentityUser>()
-					.AddDefaultUI(UIFramework.Bootstrap4)
-					.AddEntityFrameworkStores<UsersDbContext>();
 
 			services.AddDataProtection();
 
@@ -78,7 +74,7 @@ namespace UsersAPI
 			services.AddTransient<IOAuthProviderService, OAuthProviderService>();
 
 			services.AddTransient<IUsersService, UsersService>();
-			services.AddTransient<IAuthService, AuthService>();
+			services.AddHttpClient<IAuthService, AuthService>();
 
 			var sp = services.BuildServiceProvider();
 			var settingsService = sp.GetService<ISettingsService>();
@@ -98,8 +94,8 @@ namespace UsersAPI
 							ValidateAudience = true,
 							ValidateLifetime = true,
 							ValidateIssuerSigningKey = true,
-							ValidIssuer = "yourdomain.com",
-							ValidAudience = "yourdomain.com",
+							ValidIssuer = settingsService.GetJwtAuth().ValidIssuer,
+							ValidAudience = settingsService.GetJwtAuth().ValidAudience,
 							IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settingsService.GetJwtAuth().SecurityKey))
 						};
 					});
@@ -123,14 +119,12 @@ namespace UsersAPI
 			else
 			{
 				swaggerUrl = "/UsersAPI/swagger/v1/swagger.json";
-				//app.UseExceptionHandler("/Error");
-				app.UseDeveloperExceptionPage();
 			}
 
 			app.UseSwagger();
 			app.UseSwaggerUI(c =>
 			{
-				c.SwaggerEndpoint(swaggerUrl, "Users API");
+				c.SwaggerEndpoint(swaggerUrl, "Users API - v1");
 				c.RoutePrefix = string.Empty;
 			});
 

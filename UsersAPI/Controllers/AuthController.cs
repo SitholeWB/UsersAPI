@@ -26,26 +26,14 @@ namespace UsersAPI.Controllers
 		[HttpPost]
 		public async Task<ActionResult<object>> RequestToken([FromBody] TokenRequest request)
 		{
-			var (isSuccess, token) = await _authService.GetJwtTokeAsync(request);
-			if (isSuccess)
-			{
-				return new { token };
-			}
-
-			return BadRequest("Could not verify Username or password");
+			return new { token = await _authService.GetJwtTokeAsync(request) };
 		}
 
 		[AllowAnonymous]
 		[HttpPost("facebook")]
 		public async Task<ActionResult<object>> GetFacebookJwtTokeAsync([FromBody] FacebookAuthViewModel request)
 		{
-			var (isSuccess, token) = await _authService.GetFacebookJwtTokeAsync(request);
-			if (isSuccess)
-			{
-				return new { token };
-			}
-
-			return BadRequest("Could not verify Facebook user.");
+			return new { token = await _authService.GetFacebookJwtTokeAsync(request) };
 		}
 
 	}

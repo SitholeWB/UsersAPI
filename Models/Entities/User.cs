@@ -53,7 +53,7 @@ namespace Models.Entities
 					var list = Enum.GetValues(typeof(AccountAuth)).Cast<AccountAuth>().Select(v => v.ToString()).ToList();
 					if ( list.Exists(a => a.ToUpper() == value.ToUpper()) == false)
 					{
-						throw new UserException($"Account Auth \"{value}\" provided is invalid. It should be known by the system.", (int)ErrorCodes.AccountAuthInvalid);
+						throw new UserException($"Account Auth \"{value}\" provided is invalid. It should be known by the system.", ErrorCodes.AccountAuthInvalid);
 					}
 					AccountAuth_Private = value.ToUpper();
 				}

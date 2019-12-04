@@ -19,12 +19,20 @@ namespace Services
 
 		public string Encrypt(string plainText)
 		{
+			if (string.IsNullOrEmpty(plainText))
+			{
+				return string.Empty;
+			}
 			var protector = _provider.CreateProtector(_settingsService.GetCryptography().Key);
 			return protector.Protect(plainText);
 		}
 
 		public string Decrypt(string cipherText)
 		{
+			if(string.IsNullOrEmpty(cipherText))
+			{
+				return string.Empty;
+			}
 			var protector = _provider.CreateProtector(_settingsService.GetCryptography().Key);
 			return protector.Unprotect(cipherText);
 		}

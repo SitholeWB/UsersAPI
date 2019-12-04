@@ -13,9 +13,9 @@ namespace Services
 
 		public SettingsService(IOptions<JwtAuth> jwtAuth, IOptions<FacebookAuth> facebookAuth, IOptions<Cryptography> cryptography)
 		{
-			_jwtAuth = jwtAuth.Value;
-			_facebookAuth = facebookAuth.Value;
-			_cryptography = cryptography.Value;
+			_jwtAuth = jwtAuth?.Value ?? new JwtAuth();
+			_facebookAuth = facebookAuth?.Value ?? new FacebookAuth();
+			_cryptography = cryptography?.Value ?? new Cryptography();
 		}
 
 		public Cryptography GetCryptography()
