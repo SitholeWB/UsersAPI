@@ -65,7 +65,7 @@ namespace UsersAPI
 
 			//Inject DB Context
 			services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
+			services.AddScoped<IUsersDbContext, UsersDbContext>();
 			//Dependency Injection
 			services.AddSingleton<ISettingsService, SettingsService>();
 			services.AddSingleton<ICryptoEngineService, CryptoEngineService>();
