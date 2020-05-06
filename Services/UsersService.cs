@@ -101,10 +101,13 @@ namespace Services
 
 		public async Task<User> UpdateUserAsync(User user)
 		{
-			var entity = await GetUserByUsernameAsync(user.Username);
+			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == user.Id);
 			entity.Name = user.Name;
+			entity.Surname = user.Surname;
 			entity.LastModifiedDate = DateTime.UtcNow;
 			entity.About = user.About;
+			entity.Status = user.Status;
+			entity.Role = user.Role;
 			entity.Country = user.Country;
 			if (string.IsNullOrEmpty(user.Password) == false)
 			{
