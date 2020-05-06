@@ -1,9 +1,16 @@
 ﻿using Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using Models.Commands;
+using Models.Constants;
 using Models.Entities;
+using Models.Enums;
+using Models.Exceptions;
 using Services.DataLayer;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,16 +26,44 @@ namespace Services
 			_cryptoEngineService = cryptoEngineService;
 		}
 
-		public async Task<User> AddUserAsync(User user)
+		public async Task<User> AddUserAsync(AddUserCommand userCommand)
 		{
-			user.Id = Guid.NewGuid();
-			user.DateAdded = DateTime.UtcNow;
-			user.Email = user.Email;
-			user.Username = user.Username;
-			user.LastModifiedDate = DateTime.UtcNow;
-			if (string.IsNullOrEmpty(user.Password) == false)
+			var user = new User
 			{
-				user.Password = _cryptoEngineService.Encrypt(user.Password);
+				Id = Guid.NewGuid(),
+				DateAdded = DateTime.UtcNow,
+				Role = UserRoles.GENERAL,
+				LastModifiedDate = DateTime.UtcNow,
+				Name = userCommand.Name,
+				Surname = userCommand.Surname,
+				Email = userCommand.Email,
+				Username = userCommand.Email,
+				Gender = userCommand.Gender,
+				Status = Status.PENDING_VERRIFICATION,
+			};
+
+			var userByEmail = await GetUserByEmailAsync(user.Email);
+			if (!(userByEmail == default || userByEmail == null))
+			{
+				throw new UserException($"User with email '{userCommand.Email}' already exists", ErrorCodes.UserWithGivenEmailAlreadyExist);
+			}
+			if (string.IsNullOrEmpty(userCommand.Password) == false)
+			{
+				user.Password = _cryptoEngineService.Encrypt(userCommand.Password);
+			}
+			if (string.IsNullOrEmpty(userCommand.AccountAuth))
+			{
+				user.AccountAuth = AuthType.USERS_API;
+			}
+			else
+			{
+				user.AccountAuth = userCommand.AccountAuth.ToUpper();
+			}
+
+			var hasAtleastOneUser = await _dbContext.Users.AnyAsync();
+			if (!hasAtleastOneUser)
+			{
+				user.Role = UserRoles.SUPER_ADMIN;
 			}
 			var entity = await _dbContext.AddAsync<User>(user);
 			await _dbContext.SaveChangesAsync();
@@ -50,13 +85,26 @@ namespace Services
 			return await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username.ToLower());
 		}
 
+		public async Task<User> SetUserRoleAsync(Guid id, SetUserRoleCommand roleCommand)
+		{
+			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+			entity.Role = roleCommand.Role;
+			_dbContext.Update<User>(entity);
+			await _dbContext.SaveChangesAsync();
+			return entity;
+		}
+
+		public async Task<IEnumerable<User>> GetUsersAsync()
+		{
+			return await _dbContext.Users?.AsNoTracking().ToListAsync();
+		}
+
 		public async Task<User> UpdateUserAsync(User user)
 		{
 			var entity = await GetUserByUsernameAsync(user.Username);
 			entity.Name = user.Name;
 			entity.LastModifiedDate = DateTime.UtcNow;
 			entity.About = user.About;
-			entity.Verified = user.Verified;
 			entity.Country = user.Country;
 			if (string.IsNullOrEmpty(user.Password) == false)
 			{
@@ -65,6 +113,13 @@ namespace Services
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
 			return entity;
+		}
+
+		private static Dictionary<string, object> ObjectToDictionary(object obj)
+		{
+			return obj.GetType()
+					.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+					 .ToDictionary(prop => prop.Name, prop => prop.GetValue(obj, null));
 		}
 	}
 }

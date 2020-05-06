@@ -1,4 +1,5 @@
-﻿using Models.Enums;
+﻿using Models.Constants;
+using Models.Enums;
 using Models.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,7 @@ namespace Models.Entities
 			}
 		}
 		[MaxLength(5000)]
+		[JsonIgnore]
 		public string Password { get; set; }
 		[MaxLength(200)]
 		[Required]
@@ -50,10 +52,11 @@ namespace Models.Entities
 			set
 			{
 				if (!string.IsNullOrEmpty(value)) {
-					var list = Enum.GetValues(typeof(AccountAuth)).Cast<AccountAuth>().Select(v => v.ToString()).ToList();
-					if ( list.Exists(a => a.ToUpper() == value.ToUpper()) == false)
+					var type = typeof(AuthType);
+					var list = type.GetFields().ToDictionary(f => f.Name, f => f.GetValue(f).ToString());
+					if ( list.Values.Any(a => a.ToUpper() == value.ToUpper()) == false)
 					{
-						throw new UserException($"Account Auth \"{value}\" provided is invalid. It should be known by the system.", ErrorCodes.AccountAuthInvalid);
+						throw new UserException($"Account Auth Type \"{value}\" provided is invalid. It should be known by the system.", ErrorCodes.AccountAuthInvalid);
 					}
 					AccountAuth_Private = value.ToUpper();
 				}
@@ -64,7 +67,9 @@ namespace Models.Entities
 		[MaxLength(int.MaxValue)]
 		public string About { get; set; }
 		[Required]
-		public bool Verified { get; set; }
+		public string Role { get; set; }
+		[Required]
+		public string Status { get; set; }
 
 		//
 		[NotMapped]

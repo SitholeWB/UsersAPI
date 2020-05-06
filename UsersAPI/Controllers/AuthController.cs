@@ -24,16 +24,16 @@ namespace UsersAPI.Controllers
 
 		[AllowAnonymous]
 		[HttpPost]
-		public async Task<ActionResult<object>> RequestToken([FromBody] TokenRequest request)
+		public async Task<ActionResult<TokenResponse>> RequestToken([FromBody] TokenRequest request)
 		{
-			return new { token = await _authService.GetJwtTokeAsync(request) };
+			return Ok(await _authService.GetJwtTokeAsync(request));
 		}
 
 		[AllowAnonymous]
 		[HttpPost("facebook")]
-		public async Task<ActionResult<object>> GetFacebookJwtTokeAsync([FromBody] FacebookAuthViewModel request)
+		public async Task<ActionResult<TokenResponse>> GetFacebookJwtTokeAsync([FromBody] FacebookAuthViewModel request)
 		{
-			return new { token = await _authService.GetFacebookJwtTokeAsync(request) };
+			return Ok(await _authService.GetFacebookJwtTokeAsync(request));
 		}
 
 	}

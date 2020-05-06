@@ -9,7 +9,7 @@ namespace Contracts
 {
 	public interface IAuthService
 	{
-		Task<string> GetJwtTokeAsync(TokenRequest tokenRequest);
-		Task<string> GetFacebookJwtTokeAsync(FacebookAuthViewModel model);
+		Task<TokenResponse> GetJwtTokeAsync(TokenRequest tokenRequest);
+		Task<TokenResponse> GetFacebookJwtTokeAsync(FacebookAuthViewModel model);
 	}
 }

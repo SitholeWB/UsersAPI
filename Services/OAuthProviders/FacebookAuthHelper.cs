@@ -1,4 +1,6 @@
 ﻿using Contracts;
+using Models.Commands;
+using Models.Constants;
 using Models.DTOs.Facebook;
 using Models.Entities;
 using Models.Enums;
@@ -17,7 +19,7 @@ namespace Services.OAuthProviders
 		public static async Task<User> GetFacebookJwtTokeAsync(FacebookAuthViewModel model, IUsersService usersService, ISettingsService settingsService, IOAuthProviderService authProviderService, HttpClient httpClient)
 		{
 			//From https://fullstackmark.com/post/13/jwt-authentication-with-aspnet-core-2-web-api-angular-5-net-core-identity-and-facebook-login
-			
+
 			// 1.generate an app access token
 			string appSecret = settingsService.GetFacebookAuth().AppSecret;
 			string appId = settingsService.GetFacebookAuth().AppId;
@@ -41,15 +43,14 @@ namespace Services.OAuthProviders
 
 			if (user == null || user == default)
 			{
-				var appUser = new User
+				var appUser = new AddUserCommand
 				{
 					Name = userInfo.FirstName,
 					Surname = userInfo.LastName,
 					Email = userInfo.Email,
-					Username = userInfo.Email,
-					Verified = true,
-					AccountAuth = AccountAuth.FACEBOOK.ToString(),
-					Gender = userInfo.Gender
+					AccountAuth = AuthType.FACEBOOK,
+					Gender = userInfo.Gender,
+					Password = string.Empty
 				};
 
 				var result = await usersService.AddUserAsync(appUser);
@@ -62,7 +63,7 @@ namespace Services.OAuthProviders
 				await authProviderService.AddOAuthProviderAsync(new OAuthProvider
 				{
 					Email = user.Email,
-					ProviderName = AccountAuth.FACEBOOK.ToString(),
+					ProviderName = AuthType.FACEBOOK,
 					Id = result.Id,
 					DataJson = JsonSerializer.Serialize(new FacebookDto
 					{

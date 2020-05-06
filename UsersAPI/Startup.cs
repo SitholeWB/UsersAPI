@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Models.Constants;
 using Models.Settings;
 using Services;
 using Services.DataLayer;
@@ -53,6 +55,34 @@ namespace UsersAPI
 						Url = new Uri("https://github.com/SitholeWB")
 					},
 					Description = "Talk is cheap. Show me the code. - Torvalds, Linus (2000-08-25)."
+				});
+				c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+				{
+					Description =
+		"JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+					Name = "Authorization",
+					In = ParameterLocation.Header,
+					Type = SecuritySchemeType.ApiKey,
+					Scheme = "Bearer"
+				});
+
+				c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+				{
+					{
+						new OpenApiSecurityScheme
+						{
+							Reference = new OpenApiReference
+							{
+								Type = ReferenceType.SecurityScheme,
+								Id = "Bearer"
+							},
+							Scheme = "oauth2",
+							Name = "Bearer",
+							In = ParameterLocation.Header,
+				
+						},
+						new List<string>()
+					}
 				});
 			});
 
@@ -100,6 +130,35 @@ namespace UsersAPI
 						};
 					});
 
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Policy.ALL_ADMINS,
+					 policy => policy.RequireClaim("Role", UserRoles.ADMIN, UserRoles.SUPER_ADMIN));
+			});
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Policy.SUPER_ADMIN,
+					 policy => policy.RequireClaim("Role", UserRoles.SUPER_ADMIN));
+			});
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Policy.ADMIN,
+					 policy => policy.RequireClaim("Role", UserRoles.ADMIN));
+			});
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Policy.DEVELOPER,
+					 policy => policy.RequireClaim("Role", UserRoles.DEVELOPER));
+			});
+
+			services.AddAuthorization(options =>
+			{
+				options.AddPolicy(Policy.EVERYONE,
+					 policy => policy.RequireClaim("Role", UserRoles.DEVELOPER, UserRoles.GENERAL, UserRoles.SUPER_ADMIN, UserRoles.ADMIN));
+			});
 
 			services.AddControllers();
 		}

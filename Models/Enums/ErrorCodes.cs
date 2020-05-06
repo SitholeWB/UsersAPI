@@ -18,6 +18,8 @@ namespace Models.Enums
 		GivenEmailOrPasswordIsIncorrect = 13,
 		[Description("Password is required.")]
 		PasswordIsRequired = 14,
+		[Description("User with given email already exist.")]
+		UserWithGivenEmailAlreadyExist = 15,
 
 		//Not Found from 51 to 100
 		[Description("User with given email address does not exist on the system.")]
