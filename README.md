@@ -4,3 +4,11 @@ This is an API for registering and authenticating users. It uses JWT token and i
 # Getting Started
 Install Microsoft SQL Server and have dotnet development environment ready (i.e Visual studio). You must install dotnet core 3 or above.
 You should be ready to run project from visual studio and swagger page will give you nice view of endpoints.
+
+# Swagger Enabled
+To explore and test the available APIs simply run the project and use the Swagger UI.
+
+The available APIs include:
+- Creates a new user.
+- Authenticates a user.
+- Protected controller for testing role-based authorization.
