@@ -117,12 +117,5 @@ namespace Services
 			await _dbContext.SaveChangesAsync();
 			return entity;
 		}
-
-		private static Dictionary<string, object> ObjectToDictionary(object obj)
-		{
-			return obj.GetType()
-					.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-					 .ToDictionary(prop => prop.Name, prop => prop.GetValue(obj, null));
-		}
 	}
 }

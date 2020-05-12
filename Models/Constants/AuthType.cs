@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Models.Constants
 {
-	public class AuthType//OAuth Providers
+	public static class AuthType//OAuth Providers
 	{
 		public const string USERS_API = "USERS_API";//This USERS_API, that mean user has manually registered
 		public const string FACEBOOK = "FACEBOOK";

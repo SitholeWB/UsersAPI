@@ -145,8 +145,8 @@ namespace Services.Tests
             cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
             var service = new UsersService(dbContext, cryptoService);
             var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
-            var user2 = await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
-            var user3 = await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
 
             //Act
             var results = await service.GetUserByEmailAsync(user1.Email);
@@ -166,8 +166,8 @@ namespace Services.Tests
             cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
             var service = new UsersService(dbContext, cryptoService);
             var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
-            var user2 = await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
-            var user3 = await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
 
             //Act
             var results = await service.GetUserAsync(user1.Id);
@@ -187,8 +187,8 @@ namespace Services.Tests
             cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
             var service = new UsersService(dbContext, cryptoService);
             var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
-            var user2 = await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
-            var user3 = await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
+            await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
 
             //Act
             var results = await service.UpdateUserAsync(new User { Id = user1.Id, Email = "user1@zululand.co.za", Name = "UpdatedName", Surname = "UpdateSurname", Role = "ADMIN" });
