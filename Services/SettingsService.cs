@@ -11,11 +11,11 @@ namespace Services
 		private readonly FacebookAuth _facebookAuth;
 		private readonly Cryptography _cryptography;
 
-		public SettingsService(IOptions<JwtAuth> jwtAuth, IOptions<FacebookAuth> facebookAuth, IOptions<Cryptography> cryptography)
+		public SettingsService(JwtAuth jwtAuth, FacebookAuth facebookAuth, Cryptography cryptography)
 		{
-			_jwtAuth = jwtAuth?.Value ?? new JwtAuth();
-			_facebookAuth = facebookAuth?.Value ?? new FacebookAuth();
-			_cryptography = cryptography?.Value ?? new Cryptography();
+			_jwtAuth = jwtAuth ?? new JwtAuth();
+			_facebookAuth = facebookAuth ?? new FacebookAuth();
+			_cryptography = cryptography ?? new Cryptography();
 		}
 
 		public Cryptography GetCryptography()

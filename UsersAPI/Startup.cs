@@ -89,15 +89,20 @@ namespace UsersAPI
 			services.AddDataProtection();
 
 			//App Settings Injection
-			services.Configure<JwtAuth>(Configuration.GetSection("JwtAuth"));
-			services.Configure<FacebookAuth>(Configuration.GetSection("FacebookAuth"));
-			services.Configure<Cryptography>(Configuration.GetSection("Cryptography"));
+			IConfigurationSection jwtAuthConfig = Configuration.GetSection("JwtAuth");
+			IConfigurationSection facebookAuthConfig = Configuration.GetSection("FacebookAuth");
+			IConfigurationSection cryptographyConfig = Configuration.GetSection("Cryptography");
+
+			services.Configure<JwtAuth>(jwtAuthConfig);
+			services.Configure<FacebookAuth>(facebookAuthConfig);
+			services.Configure<Cryptography>(cryptographyConfig);
 
 			//Inject DB Context
 			services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 			services.AddScoped<IUsersDbContext, UsersDbContext>();
 			//Dependency Injection
-			services.AddSingleton<ISettingsService, SettingsService>();
+			var settingsService = new SettingsService(jwtAuthConfig.Get<JwtAuth>(), facebookAuthConfig.Get<FacebookAuth>(), cryptographyConfig.Get<Cryptography>());
+			services.AddSingleton<ISettingsService>(settingsService);
 			services.AddSingleton<ICryptoEngineService, CryptoEngineService>();
 
 			services.AddTransient<IErrorLogService, ErrorLogService>();
@@ -105,9 +110,6 @@ namespace UsersAPI
 
 			services.AddTransient<IUsersService, UsersService>();
 			services.AddHttpClient<IAuthService, AuthService>();
-
-			var sp = services.BuildServiceProvider();
-			var settingsService = sp.GetService<ISettingsService>();
 
 			services.AddAuthentication().AddFacebook(facebookOptions =>
 			{
