@@ -23,6 +23,7 @@ namespace Services
 		private readonly ICryptoEngineService _cryptoEngineService;
 		private readonly IOAuthProviderService _authProviderService;
 		private readonly HttpClient _httpClient;
+
 		public AuthService(IUsersService usersService, ISettingsService settingsService, ICryptoEngineService cryptoEngineService, IOAuthProviderService authProviderService, HttpClient httpClient)
 		{
 			_usersService = usersService;
@@ -38,11 +39,10 @@ namespace Services
 			return GenerateJwtTokenForUser(user, AuthType.FACEBOOK);
 		}
 
-
 		public async Task<TokenResponse> GetJwtTokeAsync(TokenRequest tokenRequest)
 		{
 			var user = await _usersService.GetUserByEmailAsync(tokenRequest.Email);
-			if (user == null || user == default)
+			if (user == null)
 			{
 				throw new UserException($"Given Email \"{tokenRequest.Email}\" is not found or Password is incorrect.", ErrorCodes.GivenEmailOrPasswordIsIncorrect);
 			}

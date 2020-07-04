@@ -16,13 +16,12 @@ namespace Services
 		{
 			_dbContext = dbContext;
 		}
-		public async Task<OAuthProvider> AddOAuthProviderAsync(OAuthProvider data)
+		public async Task<OAuthProvider> AddOAuthProviderAsync(OAuthProvider authProvider)
 		{
-			data.Id = data.Id;
-			data.DateAdded = DateTime.UtcNow;
-			data.LastModifiedDate = DateTime.UtcNow;
+			authProvider.DateAdded = DateTime.UtcNow;
+			authProvider.LastModifiedDate = DateTime.UtcNow;
 
-			var entity = await _dbContext.AddAsync<OAuthProvider>(data);
+			var entity = await _dbContext.AddAsync<OAuthProvider>(authProvider);
 			await _dbContext.SaveChangesAsync();
 			return entity.Entity;
 		}
@@ -37,16 +36,16 @@ namespace Services
 			return await _dbContext.OAuthProviders?.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
 		}
 
-		public async Task<OAuthProvider> UpdateOAuthProviderAsync(OAuthProvider data)
+		public async Task<OAuthProvider> UpdateOAuthProviderAsync(OAuthProvider authProvider)
 		{
-			var entity = await GetOAuthProviderByIdAsync(data.Id);
-			if(entity == null || entity == default)
+			var entity = await GetOAuthProviderByIdAsync(authProvider.Id);
+			if(entity == null)
 			{
-				entity = await GetOAuthProviderByEmailAsync(data.Email);
+				entity = await GetOAuthProviderByEmailAsync(authProvider.Email);
 			}
-			entity.ProviderName = data.ProviderName;
+			entity.ProviderName = authProvider.ProviderName;
 			entity.LastModifiedDate = DateTime.UtcNow;
-			entity.DataJson = data.DataJson;
+			entity.DataJson = authProvider.DataJson;
 
 			_dbContext.Update<OAuthProvider>(entity);
 			await _dbContext.SaveChangesAsync();

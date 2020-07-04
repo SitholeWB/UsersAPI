@@ -43,7 +43,7 @@ namespace Services
 			};
 
 			var userByEmail = await GetUserByEmailAsync(user.Email);
-			if (!(userByEmail == default || userByEmail == null))
+			if (!(userByEmail == null))
 			{
 				throw new UserException($"User with email '{userCommand.Email}' already exists", ErrorCodes.UserWithGivenEmailAlreadyExist);
 			}

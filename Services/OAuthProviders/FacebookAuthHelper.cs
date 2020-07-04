@@ -41,7 +41,7 @@ namespace Services.OAuthProviders
 			// 4. ready to create the local user account (if necessary) and JWT
 			var user = await usersService.GetUserByEmailAsync(userInfo.Email);
 
-			if (user == null || user == default)
+			if (user == null)
 			{
 				var appUser = new AddUserCommand
 				{
@@ -62,7 +62,7 @@ namespace Services.OAuthProviders
 
 				await authProviderService.AddOAuthProviderAsync(new OAuthProvider
 				{
-					Email = user.Email,
+					Email = userInfo.Email,
 					ProviderName = AuthType.FACEBOOK,
 					Id = result.Id,
 					DataJson = JsonSerializer.Serialize(new FacebookDto

@@ -18,9 +18,9 @@ namespace Services.DataLayer
 		public DbSet<User> Users { get; set; }
 		public DbSet<OAuthProvider> OAuthProviders { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder builder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			base.OnModelCreating(builder);
+			base.OnModelCreating(modelBuilder);
 		}
 
 		public async Task MigrateAsync()
