@@ -4,11 +4,9 @@ using Models.Entities;
 using Models.Enums;
 using Models.Exceptions;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -50,7 +48,7 @@ namespace UsersAPI.Exceptions
 		{
 			try
 			{
-				var errorType = (exception is UserException)? ErrorTypes.UserException : ErrorTypes.Unexpected;
+				var errorType = (exception is UserException) ? ErrorTypes.UserException : ErrorTypes.Unexpected;
 				await _errorLogService.AddErrorLogAsync(new ErrorLog
 				{
 					DateAdded = DateTime.UtcNow,
@@ -99,7 +97,6 @@ namespace UsersAPI.Exceptions
 					}
 				});
 			}
-
 
 			context.Response.ContentType = "application/json";
 			context.Response.StatusCode = (int)code;

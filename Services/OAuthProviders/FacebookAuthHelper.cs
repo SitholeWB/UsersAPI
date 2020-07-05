@@ -5,10 +5,7 @@ using Models.DTOs.Facebook;
 using Models.Entities;
 using Models.Enums;
 using Models.Exceptions;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -77,7 +74,5 @@ namespace Services.OAuthProviders
 
 			return user;
 		}
-
-
 	}
 }

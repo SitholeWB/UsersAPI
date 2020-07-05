@@ -1,6 +1,5 @@
 ﻿using Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Models.Commands;
 using Models.Constants;
 using Models.Entities;
@@ -9,9 +8,6 @@ using Models.Exceptions;
 using Services.DataLayer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
@@ -20,6 +16,7 @@ namespace Services
 	{
 		private readonly UsersDbContext _dbContext;
 		private readonly ICryptoEngineService _cryptoEngineService;
+
 		public UsersService(UsersDbContext dbContext, ICryptoEngineService cryptoEngineService)
 		{
 			_dbContext = dbContext;
@@ -43,11 +40,11 @@ namespace Services
 			};
 
 			var userByEmail = await GetUserByEmailAsync(user.Email);
-			if (!(userByEmail == null))
+			if (userByEmail != null)
 			{
 				throw new UserException($"User with email '{userCommand.Email}' already exists", ErrorCodes.UserWithGivenEmailAlreadyExist);
 			}
-			if (string.IsNullOrEmpty(userCommand.Password) == false)
+			if (!string.IsNullOrEmpty(userCommand.Password))
 			{
 				user.Password = _cryptoEngineService.Encrypt(userCommand.Password);
 			}
@@ -109,7 +106,7 @@ namespace Services
 			entity.Status = user.Status;
 			entity.Role = user.Role;
 			entity.Country = user.Country;
-			if (string.IsNullOrEmpty(user.Password) == false)
+			if (!string.IsNullOrEmpty(user.Password))
 			{
 				entity.Password = _cryptoEngineService.Encrypt(user.Password);
 			}

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Models.Constants
+﻿namespace Models.Constants
 {
 	public static class AuthType//OAuth Providers
 	{
@@ -11,12 +7,14 @@ namespace Models.Constants
 
 		//To come on next version
 		public const string GOOGLE = "GOOGLE";
+
 		public const string TWITTER = "TWITTER";
 		public const string LINKEDIN = "LINKEDIN";
 		public const string YAHOO = "YAHOO";
 		public const string MICROSOFT = "MICROSOFT";
 		public const string AMAZON = "AMAZON";
 	}
+
 	public static class Status//OAuth Providers
 	{
 		public const string PENDING_VERRIFICATION = "PENDING_VERRIFICATION";

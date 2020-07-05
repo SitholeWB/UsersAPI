@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Models.Constants
+﻿namespace Models.Constants
 {
 	public static class UserRoles
 	{

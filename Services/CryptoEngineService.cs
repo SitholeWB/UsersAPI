@@ -1,8 +1,5 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.DataProtection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Services
 {
@@ -29,7 +26,7 @@ namespace Services
 
 		public string Decrypt(string cipherText)
 		{
-			if(string.IsNullOrEmpty(cipherText))
+			if (string.IsNullOrEmpty(cipherText))
 			{
 				return string.Empty;
 			}

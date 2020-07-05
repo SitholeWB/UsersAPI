@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Services.OAuthProviders
+﻿namespace Services.OAuthProviders
 {
 	public static class GoogleAuthHelper
 	{

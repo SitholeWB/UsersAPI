@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Contracts;
+﻿using Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Commands;
 using Models.Constants;
 using Models.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace UsersAPI.Controllers
 {
@@ -69,7 +66,6 @@ namespace UsersAPI.Controllers
 			return Ok(await _usersService.UpdateUserAsync(user));
 		}
 
-
 		[Authorize(Policy = Policy.SUPER_ADMIN)]
 		[Route("{id}/roles")]
 		[HttpPut]
@@ -77,6 +73,5 @@ namespace UsersAPI.Controllers
 		{
 			return Ok(await _usersService.SetUserRoleAsync(id, role));
 		}
-
 	}
 }

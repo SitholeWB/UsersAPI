@@ -1,7 +1,5 @@
 ﻿using Contracts;
-using Microsoft.Extensions.Options;
 using Models.Settings;
-using System;
 
 namespace Services
 {

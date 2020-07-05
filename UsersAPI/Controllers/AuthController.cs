@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Contracts;
+﻿using Contracts;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.DTOs.Auth;
 using Models.DTOs.Facebook;
+using System.Threading.Tasks;
 
 namespace UsersAPI.Controllers
 {
@@ -35,6 +31,5 @@ namespace UsersAPI.Controllers
 		{
 			return Ok(await _authService.GetFacebookJwtTokeAsync(request));
 		}
-
 	}
 }

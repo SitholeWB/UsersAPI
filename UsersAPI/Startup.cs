@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -15,6 +12,9 @@ using Models.Constants;
 using Models.Settings;
 using Services;
 using Services.DataLayer;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using UsersAPI.Exceptions;
 
 namespace UsersAPI
@@ -51,7 +51,7 @@ namespace UsersAPI
 					Version = "v1",
 					Contact = new OpenApiContact
 					{
-						Name = "Welcome Sithole" ,
+						Name = "Welcome Sithole",
 						Url = new Uri("https://github.com/SitholeWB")
 					},
 					Description = "Talk is cheap. Show me the code. - Torvalds, Linus (2000-08-25)."
@@ -79,7 +79,6 @@ namespace UsersAPI
 							Scheme = "oauth2",
 							Name = "Bearer",
 							In = ParameterLocation.Header,
-				
 						},
 						new List<string>()
 					}

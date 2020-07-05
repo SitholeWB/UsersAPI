@@ -3,8 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Services.DataLayer;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Services
@@ -12,10 +10,12 @@ namespace Services
 	public class OAuthProviderService : IOAuthProviderService
 	{
 		private readonly UsersDbContext _dbContext;
+
 		public OAuthProviderService(UsersDbContext dbContext)
 		{
 			_dbContext = dbContext;
 		}
+
 		public async Task<OAuthProvider> AddOAuthProviderAsync(OAuthProvider authProvider)
 		{
 			authProvider.DateAdded = DateTime.UtcNow;
@@ -39,7 +39,7 @@ namespace Services
 		public async Task<OAuthProvider> UpdateOAuthProviderAsync(OAuthProvider authProvider)
 		{
 			var entity = await GetOAuthProviderByIdAsync(authProvider.Id);
-			if(entity == null)
+			if (entity == null)
 			{
 				entity = await GetOAuthProviderByEmailAsync(authProvider.Email);
 			}
