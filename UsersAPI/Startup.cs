@@ -89,7 +89,6 @@ namespace UsersAPI
 			});
 
 			services.AddDataProtection();
-			services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 			services.AddHttpContextAccessor();
 
 			//App Settings Injection

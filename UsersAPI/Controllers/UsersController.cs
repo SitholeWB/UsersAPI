@@ -51,7 +51,7 @@ namespace UsersAPI.Controllers
 			return Ok(await _userIdendityService.GetAuthorizedUser());
 		}
 
-		[Authorize(Policy = Policy.SUPER_ADMIN)]
+		[Authorize(Policy = Policy.ALL_ADMINS)]
 		[Route("")]
 		[HttpGet]
 		public async Task<ActionResult<User>> GetUsersAsync()
