@@ -86,6 +86,10 @@ namespace UsersAPI.Exceptions
 				{
 					code = HttpStatusCode.NotFound;
 				}
+				else if (ex.ErrorCode >= 101 && ex.ErrorCode <= 150)
+				{
+					code = HttpStatusCode.Forbidden;
+				}
 
 				result = JsonSerializer.Serialize(new
 				{

@@ -1,6 +1,7 @@
 using Contracts;
 using Microsoft.EntityFrameworkCore;
 using Models.Commands;
+using Models.Constants;
 using Models.Entities;
 using Models.Exceptions;
 using NSubstitute;
@@ -20,9 +21,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 
 			//Act
 			var results = await service.AddUserAsync(new AddUserCommand { Email = "user@zululand.co.za", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
@@ -40,9 +42,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("TestDecrypted");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("TestEncrypted");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 
 			//Act
 			var results = await service.AddUserAsync(new AddUserCommand { Email = "user@zululand.co.za", Password = "pass123", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
@@ -61,9 +64,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
 
 			//Act
@@ -83,9 +87,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 
 			//Act
 			var results = await service.AddUserAsync(new AddUserCommand { Email = "user@zululand.co.za", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
@@ -104,9 +109,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			await service.AddUserAsync(new AddUserCommand { Email = "user@zululand.co.za", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
 
 			//Act & Assert
@@ -119,9 +125,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
 
@@ -140,9 +147,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
@@ -161,9 +169,10 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
@@ -182,13 +191,17 @@ namespace Services.Tests
 			//Arrange
 			var dbContext = GetDatabaseContext();
 			var cryptoService = Substitute.For<ICryptoEngineService>();
+			var userIdendityService = Substitute.For<IUserIdendityService>();
 			cryptoService.Decrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
 			cryptoService.Encrypt(Arg.Any<string>()).ReturnsForAnyArgs<string>("test");
-			var service = new UsersService(dbContext, cryptoService);
+			var service = new UsersService(dbContext, cryptoService, userIdendityService);
 			var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
-
+			userIdendityService.GetAuthorizedUser().Returns<User>(new User
+			{
+				Role = UserRoles.ADMIN
+			});
 			//Act
 			var results = await service.UpdateUserAsync(new User { Id = user1.Id, Email = "user1@zululand.co.za", Name = "UpdatedName", Surname = "UpdateSurname", Role = "ADMIN" });
 			var resultsUpdated = await service.GetUserAsync(user1.Id);

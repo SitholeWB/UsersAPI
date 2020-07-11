@@ -68,8 +68,12 @@ namespace Services
 		public async Task<TokenResponse> GetJwtTokenForImpersonatedUserAsync(ImpersonateTokenRequest request)
 		{
 			var impersonatedUser = await _usersService.GetUserAsync(request.UserId);
+			if (impersonatedUser == null)
+			{
+				throw new UserException($"No User found for given Id: {request.UserId}.", ErrorCodes.UserWithGivenIdNotFound);
+			}
 			var user = await _userIdendityService.GetApplicationUser();
-			return GenerateJwtTokenForUser(user.AuthenticatedUser, "Impersonate", impersonatedUser);
+			return GenerateJwtTokenForUser(user.AuthenticatedUser, AuthType.IMPERSONATE, impersonatedUser);
 		}
 
 		public async Task<TokenResponse> StopJwtTokenForImpersonatedUserAsync()
@@ -85,7 +89,7 @@ namespace Services
 					new Claim(ClaimTypes.Role, user.Role),
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-					new Claim("Status", user.Status)
+					new Claim(CustomClaimTypes.Status, user.Status)
 			};
 			var expires = DateTime.UtcNow.AddDays(_settingsService.GetJwtAuth().ExpiresDays);
 			string displayName = $"{user.Name} {user.Surname}";
@@ -96,8 +100,8 @@ namespace Services
 					new Claim(ClaimTypes.Role, impersonatedUser.Role),
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-					new Claim("Status", user.Status),
-					new Claim("ImpersonatedUserId", impersonatedUser.Id.ToString())
+					new Claim(CustomClaimTypes.Status, user.Status),
+					new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString())
 			};
 				expires = DateTime.UtcNow.AddDays(1);
 				displayName = $"Impersonated: {impersonatedUser.Name} {impersonatedUser.Surname}";

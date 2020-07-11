@@ -16,11 +16,13 @@ namespace Services
 	{
 		private readonly UsersDbContext _dbContext;
 		private readonly ICryptoEngineService _cryptoEngineService;
+		private readonly IUserIdendityService _userIdendityService;
 
-		public UsersService(UsersDbContext dbContext, ICryptoEngineService cryptoEngineService)
+		public UsersService(UsersDbContext dbContext, ICryptoEngineService cryptoEngineService, IUserIdendityService userIdendityService)
 		{
 			_dbContext = dbContext;
 			_cryptoEngineService = cryptoEngineService;
+			_userIdendityService = userIdendityService;
 		}
 
 		public async Task<User> AddUserAsync(AddUserCommand userCommand)
@@ -98,7 +100,17 @@ namespace Services
 
 		public async Task<User> UpdateUserAsync(User user)
 		{
+			var authUser = await _userIdendityService.GetAuthorizedUser();
+			if (user.Id != authUser.Id && authUser.Role != UserRoles.ADMIN && authUser.Role != UserRoles.SUPER_ADMIN)
+			{
+				throw new UserException("You are not allowed to update someone else account details.", ErrorCodes.NotAllowedToUpdateOtherUserData);
+			}
+
 			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == user.Id);
+			if (entity == null)
+			{
+				throw new UserException($"No User found for given Id: {user.Id}.", ErrorCodes.UserWithGivenIdNotFound);
+			}
 			entity.Name = user.Name;
 			entity.Surname = user.Surname;
 			entity.LastModifiedDate = DateTime.UtcNow;

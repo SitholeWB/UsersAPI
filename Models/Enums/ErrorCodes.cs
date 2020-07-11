@@ -29,6 +29,13 @@ namespace Models.Enums
 
 		[Description("User with given Username does not exist on the system.")]
 		UserWithGivenUsernameNotFound = 52,
+
+		[Description("User with given Id does not exist on the system.")]
+		UserWithGivenIdNotFound = 53,
+
+		//Forbidden from 101 to 150
+		[Description("User not allowed to update information for other users.")]
+		NotAllowedToUpdateOtherUserData = 101,
 	}
 
 	public enum ErrorTypes

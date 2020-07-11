@@ -15,10 +15,12 @@ namespace UsersAPI.Controllers
 	public class UsersController : ControllerBase
 	{
 		private readonly IUsersService _usersService;
+		private readonly IUserIdendityService _userIdendityService;
 
-		public UsersController(IUsersService usersService)
+		public UsersController(IUsersService usersService, IUserIdendityService userIdendityService)
 		{
 			_usersService = usersService;
+			_userIdendityService = userIdendityService;
 		}
 
 		[Route("email/{email}")]
@@ -42,6 +44,13 @@ namespace UsersAPI.Controllers
 			return Ok(await _usersService.GetUserAsync(id));
 		}
 
+		[Route("mydetails")]
+		[HttpGet]
+		public async Task<ActionResult<User>> GetAuthorizedUser()
+		{
+			return Ok(await _userIdendityService.GetAuthorizedUser());
+		}
+
 		[Authorize(Policy = Policy.SUPER_ADMIN)]
 		[Route("")]
 		[HttpGet]
@@ -62,7 +71,6 @@ namespace UsersAPI.Controllers
 		[HttpPut]
 		public async Task<ActionResult<User>> UpdateUserAsync([FromBody] User user)
 		{
-			//TODO: Only allow authorized user to call this endpoint
 			return Ok(await _usersService.UpdateUserAsync(user));
 		}
 

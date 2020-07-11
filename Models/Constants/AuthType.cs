@@ -3,6 +3,7 @@
 	public static class AuthType//OAuth Providers
 	{
 		public const string USERS_API = "USERS_API";//This USERS_API, that mean user has manually registered
+		public const string IMPERSONATE = "IMPERSONATE";
 		public const string FACEBOOK = "FACEBOOK";
 
 		//To come on next version

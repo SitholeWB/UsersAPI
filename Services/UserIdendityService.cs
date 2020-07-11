@@ -1,7 +1,9 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Models.DTOs;
 using Models.Entities;
+using Services.DataLayer;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -13,18 +15,13 @@ namespace Services
 	{
 		private readonly IHttpContextAccessor _context;
 		private ApplicationUser _applicationUser;
-		private readonly IUsersService _usersService;
+		private readonly UsersDbContext _dbContext;
 
-		public UserIdendityService(IHttpContextAccessor context, IUsersService usersService)
+		public UserIdendityService(IHttpContextAccessor context, UsersDbContext dbContext)
 		{
 			_context = context;
 			_applicationUser = null;
-			_usersService = usersService;
-		}
-
-		public void Dispose()
-		{
-			_applicationUser = null;
+			_dbContext = dbContext;
 		}
 
 		public async Task<ApplicationUser> GetApplicationUser()
@@ -34,7 +31,7 @@ namespace Services
 				return _applicationUser;
 			}
 			var userId = _context.HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier);
-			var user = await _usersService.GetUserAsync(Guid.Parse(userId.Value));
+			var user = await _dbContext.Users.FirstAsync(a => a.Id == Guid.Parse(userId.Value));
 
 			_applicationUser = new ApplicationUser
 			{
@@ -44,7 +41,7 @@ namespace Services
 			var impersonatedUserId = _context.HttpContext.User.Claims.FirstOrDefault(a => a.Type == "ImpersonatedUserId");
 			if (impersonatedUserId != null)
 			{
-				_applicationUser.ImpersonatedUser = await _usersService.GetUserAsync(Guid.Parse(impersonatedUserId.Value));
+				_applicationUser.ImpersonatedUser = await _dbContext.Users.FirstAsync(a => a.Id == Guid.Parse(impersonatedUserId.Value));
 			}
 			return _applicationUser;
 		}
@@ -53,6 +50,11 @@ namespace Services
 		{
 			var appUser = await GetApplicationUser();
 			return appUser.ImpersonatedUser ?? appUser.AuthenticatedUser;
+		}
+
+		public void Dispose()
+		{
+			_applicationUser = null;
 		}
 	}
 }
