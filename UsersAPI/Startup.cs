@@ -2,9 +2,11 @@ using Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -14,6 +16,7 @@ using Services;
 using Services.DataLayer;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 using UsersAPI.Exceptions;
 
@@ -86,6 +89,8 @@ namespace UsersAPI
 			});
 
 			services.AddDataProtection();
+			services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddHttpContextAccessor();
 
 			//App Settings Injection
 			IConfigurationSection jwtAuthConfig = Configuration.GetSection("JwtAuth");
@@ -99,6 +104,9 @@ namespace UsersAPI
 			//Inject DB Context
 			services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 			services.AddScoped<IUsersDbContext, UsersDbContext>();
+
+			services.AddScoped<IUserIdendityService, UserIdendityService>();
+
 			//Dependency Injection
 			var settingsService = new SettingsService(jwtAuthConfig.Get<JwtAuth>(), facebookAuthConfig.Get<FacebookAuth>(), cryptographyConfig.Get<Cryptography>());
 			services.AddSingleton<ISettingsService>(settingsService);
@@ -134,31 +142,31 @@ namespace UsersAPI
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(Policy.ALL_ADMINS,
-					 policy => policy.RequireClaim("Role", UserRoles.ADMIN, UserRoles.SUPER_ADMIN));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.ADMIN, UserRoles.SUPER_ADMIN));
 			});
 
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(Policy.SUPER_ADMIN,
-					 policy => policy.RequireClaim("Role", UserRoles.SUPER_ADMIN));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.SUPER_ADMIN));
 			});
 
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(Policy.ADMIN,
-					 policy => policy.RequireClaim("Role", UserRoles.ADMIN));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.ADMIN));
 			});
 
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(Policy.DEVELOPER,
-					 policy => policy.RequireClaim("Role", UserRoles.DEVELOPER));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.DEVELOPER));
 			});
 
 			services.AddAuthorization(options =>
 			{
 				options.AddPolicy(Policy.EVERYONE,
-					 policy => policy.RequireClaim("Role", UserRoles.DEVELOPER, UserRoles.GENERAL, UserRoles.SUPER_ADMIN, UserRoles.ADMIN));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.DEVELOPER, UserRoles.GENERAL, UserRoles.SUPER_ADMIN, UserRoles.ADMIN));
 			});
 
 			services.AddControllers();
@@ -195,7 +203,6 @@ namespace UsersAPI
 			app.UseRouting();
 
 			app.UseAuthorization();
-
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();

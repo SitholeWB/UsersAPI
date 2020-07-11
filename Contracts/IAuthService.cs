@@ -9,5 +9,9 @@ namespace Contracts
 		Task<TokenResponse> GetJwtTokeAsync(TokenRequest tokenRequest);
 
 		Task<TokenResponse> GetFacebookJwtTokeAsync(FacebookAuthViewModel model);
+
+		Task<TokenResponse> GetJwtTokenForImpersonatedUserAsync(ImpersonateTokenRequest request);
+
+		Task<TokenResponse> StopJwtTokenForImpersonatedUserAsync();
 	}
 }
