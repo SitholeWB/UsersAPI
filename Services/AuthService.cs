@@ -84,27 +84,29 @@ namespace Services
 
 		private TokenResponse GenerateJwtTokenForUser(User user, string accountAuth, User impersonatedUser = null)
 		{
+			var displayName = $"{user.Name} {user.Surname}";
 			var claims = new[]
 			{
 					new Claim(ClaimTypes.Role, user.Role),
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-					new Claim(CustomClaimTypes.Status, user.Status)
+					new Claim(CustomClaimTypes.Status, user.Status),
+					new Claim(ClaimTypes.Name, displayName)
 			};
 			var expires = DateTime.UtcNow.AddDays(_settingsService.GetJwtAuth().ExpiresDays);
-			string displayName = $"{user.Name} {user.Surname}";
 			if (impersonatedUser != null)
 			{
+				displayName = $"Impersonated: {impersonatedUser.Name} {impersonatedUser.Surname}";
 				claims = new[]
 			{
 					new Claim(ClaimTypes.Role, impersonatedUser.Role),
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 					new Claim(CustomClaimTypes.Status, user.Status),
-					new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString())
+					new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString()),
+					new Claim(ClaimTypes.Name, displayName)
 			};
 				expires = DateTime.UtcNow.AddDays(1);
-				displayName = $"Impersonated: {impersonatedUser.Name} {impersonatedUser.Surname}";
 			}
 
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settingsService.GetJwtAuth().SecurityKey));
