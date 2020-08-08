@@ -1,4 +1,5 @@
 ﻿using Models.Commands;
+using Models.Commands.Responses;
 using Models.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,18 +9,20 @@ namespace Contracts
 {
 	public interface IUsersService
 	{
-		Task<User> AddUserAsync(AddUserCommand userCommand);
+		Task<UserResponse> AddUserAsync(AddUserCommand userCommand);
 
-		Task<User> UpdateUserAsync(User user);
+		Task<UserResponse> UpdateUserAsync(User user);
 
-		Task<User> GetUserByUsernameAsync(string username);
+		Task<UserResponse> GetUserByUsernameAsync(string username);
 
-		Task<User> GetUserByEmailAsync(string email);
+		Task<UserResponse> GetUserByEmailAsync(string email);
 
-		Task<User> GetUserAsync(Guid id);
+		Task<UserResponse> GetUserAsync(Guid id);
 
-		Task<User> SetUserRoleAsync(Guid id, SetUserRoleCommand roleCommand);
+		Task<UserResponse> SetUserRoleAsync(Guid id, SetUserRoleCommand roleCommand);
 
-		Task<IEnumerable<User>> GetUsersAsync();
+		Task<IEnumerable<UserResponse>> GetUsersAsync();
+
+		Task<User> GetUserEntityByInputAsync(string email = null, string username = null, Guid? id = null);
 	}
 }

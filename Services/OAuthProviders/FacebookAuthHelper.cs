@@ -36,7 +36,7 @@ namespace Services.OAuthProviders
 			var userInfo = JsonSerializer.Deserialize<FacebookUserData>(userInfoResponse);
 
 			// 4. ready to create the local user account (if necessary) and JWT
-			var user = await usersService.GetUserByEmailAsync(userInfo.Email);
+			var user = await usersService.GetUserEntityByInputAsync(email: userInfo.Email);
 
 			if (user == null)
 			{

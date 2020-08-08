@@ -44,7 +44,7 @@ namespace Services
 
 		public async Task<TokenResponse> GetJwtTokeAsync(TokenRequest tokenRequest)
 		{
-			var user = await _usersService.GetUserByEmailAsync(tokenRequest.Email);
+			var user = await _usersService.GetUserEntityByInputAsync(email: tokenRequest.Email);
 			if (user == null)
 			{
 				throw new UserException($"Given Email \"{tokenRequest.Email}\" is not found or Password is incorrect.", ErrorCodes.GivenEmailOrPasswordIsIncorrect);
@@ -67,7 +67,7 @@ namespace Services
 
 		public async Task<TokenResponse> GetJwtTokenForImpersonatedUserAsync(ImpersonateTokenRequest request)
 		{
-			var impersonatedUser = await _usersService.GetUserAsync(request.UserId);
+			var impersonatedUser = await _usersService.GetUserEntityByInputAsync(id: request.UserId);
 			if (impersonatedUser == null)
 			{
 				throw new UserException($"No User found for given Id: {request.UserId}.", ErrorCodes.UserWithGivenIdNotFound);

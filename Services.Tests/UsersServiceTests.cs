@@ -49,13 +49,18 @@ namespace Services.Tests
 
 			//Act
 			var results = await service.AddUserAsync(new AddUserCommand { Email = "user@zululand.co.za", Password = "pass123", Name = "Welcome", Surname = "Sithole", Gender = "Male" });
-
+			var addedUser = await service.GetUserEntityByInputAsync(id: results.Id);
 			//Assert
-			Assert.AreEqual("TestEncrypted", results.Password);
+			Assert.AreEqual("TestEncrypted", addedUser.Password);
 			Assert.AreEqual("Welcome", results.Name);
 			Assert.AreEqual("Sithole", results.Surname);
 			Assert.AreEqual("Male", results.Gender);
 			Assert.AreEqual("user@zululand.co.za", results.Email);
+
+			Assert.AreEqual("Welcome", addedUser.Name);
+			Assert.AreEqual("Sithole", addedUser.Surname);
+			Assert.AreEqual("Male", addedUser.Gender);
+			Assert.AreEqual("user@zululand.co.za", addedUser.Email);
 		}
 
 		[Test]

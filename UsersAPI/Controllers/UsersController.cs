@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Commands;
+using Models.Commands.Responses;
 using Models.Constants;
 using Models.Entities;
 using System;
@@ -25,28 +26,28 @@ namespace UsersAPI.Controllers
 
 		[Route("email/{email}")]
 		[HttpGet]
-		public async Task<ActionResult<User>> GetUserByEmailAsync(string email)
+		public async Task<ActionResult<UserResponse>> GetUserByEmailAsync(string email)
 		{
 			return Ok(await _usersService.GetUserByEmailAsync(email));
 		}
 
 		[Route("username/{username}")]
 		[HttpGet]
-		public async Task<ActionResult<User>> GetUserByUsernameAsync(string username)
+		public async Task<ActionResult<UserResponse>> GetUserByUsernameAsync(string username)
 		{
 			return Ok(await _usersService.GetUserByUsernameAsync(username));
 		}
 
 		[Route("{id}")]
 		[HttpGet]
-		public async Task<ActionResult<User>> GetUserAsync(Guid id)
+		public async Task<ActionResult<UserResponse>> GetUserAsync(Guid id)
 		{
 			return Ok(await _usersService.GetUserAsync(id));
 		}
 
 		[Route("mydetails")]
 		[HttpGet]
-		public async Task<ActionResult<User>> GetAuthorizedUser()
+		public async Task<ActionResult<UserResponse>> GetAuthorizedUser()
 		{
 			return Ok(await _userIdendityService.GetAuthorizedUser());
 		}
@@ -54,7 +55,7 @@ namespace UsersAPI.Controllers
 		[Authorize(Policy = Policy.ALL_ADMINS)]
 		[Route("")]
 		[HttpGet]
-		public async Task<ActionResult<User>> GetUsersAsync()
+		public async Task<ActionResult<UserResponse>> GetUsersAsync()
 		{
 			return Ok(await _usersService.GetUsersAsync());
 		}
@@ -62,14 +63,14 @@ namespace UsersAPI.Controllers
 		[Route("")]
 		[HttpPost]
 		[AllowAnonymous]
-		public async Task<ActionResult<User>> AddUserAsync([FromBody] AddUserCommand user)
+		public async Task<ActionResult<UserResponse>> AddUserAsync([FromBody] AddUserCommand user)
 		{
 			return Ok(await _usersService.AddUserAsync(user));
 		}
 
 		[Route("")]
 		[HttpPut]
-		public async Task<ActionResult<User>> UpdateUserAsync([FromBody] User user)
+		public async Task<ActionResult<UserResponse>> UpdateUserAsync([FromBody] User user)
 		{
 			return Ok(await _usersService.UpdateUserAsync(user));
 		}
@@ -77,7 +78,7 @@ namespace UsersAPI.Controllers
 		[Authorize(Policy = Policy.SUPER_ADMIN)]
 		[Route("{id}/roles")]
 		[HttpPut]
-		public async Task<ActionResult<User>> UpdateUserAsync([FromBody] SetUserRoleCommand role, [FromRoute] Guid id)
+		public async Task<ActionResult<UserResponse>> UpdateUserAsync([FromBody] SetUserRoleCommand role, [FromRoute] Guid id)
 		{
 			return Ok(await _usersService.SetUserRoleAsync(id, role));
 		}
