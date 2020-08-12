@@ -2,7 +2,8 @@
 {
 	public interface ICryptoEngineService
 	{
-		string Encrypt(string plainText);
-		string Decrypt(string cipherText);
+		string Encrypt(string plainText, string sharedKey = "");
+
+		string Decrypt(string cipherText, string sharedKey = "");
 	}
 }

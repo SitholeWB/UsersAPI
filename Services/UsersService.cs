@@ -50,7 +50,7 @@ namespace Services
 			}
 			if (!string.IsNullOrEmpty(userCommand.Password))
 			{
-				user.Password = _cryptoEngineService.Encrypt(userCommand.Password);
+				user.Password = _cryptoEngineService.Encrypt(userCommand.Password, user.Id.ToString());
 			}
 			if (string.IsNullOrEmpty(userCommand.AccountAuth))
 			{
@@ -143,7 +143,7 @@ namespace Services
 			entity.Country = user.Country;
 			if (!string.IsNullOrEmpty(user.Password))
 			{
-				entity.Password = _cryptoEngineService.Encrypt(user.Password);
+				entity.Password = _cryptoEngineService.Encrypt(user.Password, user.Id.ToString());
 			}
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();

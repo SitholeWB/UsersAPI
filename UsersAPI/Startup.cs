@@ -52,15 +52,14 @@ namespace UsersAPI
 					Version = "v1",
 					Contact = new OpenApiContact
 					{
-						Name = "Welcome Sithole",
+						Name = "Welcome Bonginhlahla Sithole",
 						Url = new Uri("https://github.com/SitholeWB")
 					},
 					Description = "Talk is cheap. Show me the code. - Torvalds, Linus (2000-08-25)."
 				});
 				c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
 				{
-					Description =
-		"JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+					Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
 					Name = "Authorization",
 					In = ParameterLocation.Header,
 					Type = SecuritySchemeType.ApiKey,
@@ -86,7 +85,6 @@ namespace UsersAPI
 				});
 			});
 
-			services.AddDataProtection();
 			services.AddHttpContextAccessor();
 
 			//App Settings Injection

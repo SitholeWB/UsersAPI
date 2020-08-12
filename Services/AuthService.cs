@@ -55,7 +55,7 @@ namespace Services
 				throw new UserException("Password is required.", ErrorCodes.PasswordIsRequired);
 			}
 
-			var password = _cryptoEngineService.Decrypt(user.Password);
+			var password = _cryptoEngineService.Decrypt(user.Password, user.Id.ToString());
 
 			if (user.Email == tokenRequest.Email && password == tokenRequest.password)
 			{
