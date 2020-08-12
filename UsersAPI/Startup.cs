@@ -109,8 +109,9 @@ namespace UsersAPI
 
 			services.AddTransient<IErrorLogService, ErrorLogService>();
 			services.AddTransient<IOAuthProviderService, OAuthProviderService>();
-
+			services.AddTransient<IRecoverPasswordService, RecoverPasswordService>();
 			services.AddTransient<IUsersService, UsersService>();
+
 			services.AddHttpClient<IAuthService, AuthService>();
 
 			services.AddAuthentication().AddFacebook(facebookOptions =>

@@ -23,6 +23,12 @@ namespace Models.Enums
 		[Description("User with given email already exist.")]
 		UserWithGivenEmailAlreadyExist = 15,
 
+		[Description("Reset password link is inalid.")]
+		ResetPasswordLinkInValid = 16,
+
+		[Description("Reset password link has expired.")]
+		ResetPasswordLinkExpired = 17,
+
 		//Not Found from 51 to 100
 		[Description("User with given email address does not exist on the system.")]
 		UserWithGivenEmailNotFound = 51,

@@ -14,6 +14,7 @@ namespace Services.DataLayer
 		public DbSet<ErrorLog> ErrorLogs { get; set; }
 		public DbSet<User> Users { get; set; }
 		public DbSet<OAuthProvider> OAuthProviders { get; set; }
+		public DbSet<RecoverPassword> RecoverPasswords { get; set; }
 
 		public async Task MigrateAsync()
 		{
