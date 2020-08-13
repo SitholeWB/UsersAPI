@@ -1,12 +1,13 @@
 ﻿using Contracts;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Models.Commands;
 using Models.DTOs;
 using Models.Entities;
 using Models.Enums;
+using Models.Events;
 using Models.Exceptions;
 using Services.DataLayer;
+using Services.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,12 +20,14 @@ namespace Services
 	{
 		private readonly UsersDbContext _dbContext;
 		private readonly ICryptoEngineService _cryptoEngineService;
+		private readonly EventHandlerContainer _eventHandlerContainer;
 
 		public RecoverPasswordService(ICryptoEngineService cryptoEngineService,
-			UsersDbContext dbContext)
+			UsersDbContext dbContext, EventHandlerContainer eventHandlerContainer)
 		{
 			_cryptoEngineService = cryptoEngineService;
 			_dbContext = dbContext;
+			_eventHandlerContainer = eventHandlerContainer;
 		}
 
 		public async Task<RecoverPassword> GetRecoverPasswordAsync(Guid id)
@@ -52,7 +55,16 @@ namespace Services
 			await _dbContext.AddAsync<RecoverPassword>(recoverPassword);
 			await _dbContext.SaveChangesAsync();
 
-			//TODO: Notify user or other service with  information about reseting password.
+			await _eventHandlerContainer.PublishAsync<RecoverPasswordEvent>(new RecoverPasswordEvent
+			{
+				RecoverPassword = recoverPassword,
+				User = new MiniUser
+				{
+					Email = user.Email,
+					Fullnames = $"{user.Name} {user.Surname}",
+					Id = user.Id
+				}
+			});
 		}
 
 		public async Task SetNewUserPasswordAsync(SetNewUserPasswordCommand command, Guid id, string hash)
@@ -75,6 +87,17 @@ namespace Services
 			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Email == recoverPassword.Email);
 			user.Password = _cryptoEngineService.Encrypt(command.Password, user.Id.ToString());
 			await _dbContext.SaveChangesAsync();
+
+			await _eventHandlerContainer.PublishAsync<RecoverPasswordCompletedEvent>(new RecoverPasswordCompletedEvent
+			{
+				RecoverPassword = recoverPassword,
+				User = new MiniUser
+				{
+					Email = user.Email,
+					Fullnames = $"{user.Name} {user.Surname}",
+					Id = user.Id
+				}
+			});
 		}
 
 		public async Task DeleteRecoverPasswordAsync(Guid id)

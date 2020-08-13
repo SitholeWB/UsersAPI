@@ -9,9 +9,12 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Constants;
+using Models.Events;
 using Models.Settings;
 using Services;
 using Services.DataLayer;
+using Services.Events;
+using Services.Events.Handles;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -111,6 +114,14 @@ namespace UsersAPI
 			services.AddTransient<IOAuthProviderService, OAuthProviderService>();
 			services.AddTransient<IRecoverPasswordService, RecoverPasswordService>();
 			services.AddTransient<IUsersService, UsersService>();
+
+			//Events
+			services.AddTransient<EventHandlerContainer>();
+			services.AddTransient<RecoverPasswordSendEmailHandler>();
+			services.AddTransient<RecoverPasswordCompletedHandler>();
+
+			EventHandlerContainer.Subscribe<RecoverPasswordEvent, RecoverPasswordSendEmailHandler>();
+			EventHandlerContainer.Subscribe<RecoverPasswordCompletedEvent, RecoverPasswordCompletedHandler>();
 
 			services.AddHttpClient<IAuthService, AuthService>();
 
