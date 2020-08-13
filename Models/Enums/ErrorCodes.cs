@@ -42,6 +42,9 @@ namespace Models.Enums
 		//Forbidden from 101 to 150
 		[Description("User not allowed to update information for other users.")]
 		NotAllowedToUpdateOtherUserData = 101,
+
+		[Description("There is no Recover Password entry for given Id.")]
+		RecoverPasswordIdNotFound = 102,
 	}
 
 	public enum ErrorTypes

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Services.Background;
 using System;
 using System.Threading.Tasks;
 
@@ -40,6 +41,6 @@ namespace UsersAPI
 					{
 						// Set properties and call methods on options
 					}).UseStartup<Startup>();
-				});
+				}).ConfigureServices(services => services.AddHostedService<RecoverPasswordTimedHostedService>());
 	}
 }

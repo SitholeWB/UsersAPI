@@ -8,6 +8,8 @@ using Models.Enums;
 using Models.Exceptions;
 using Services.DataLayer;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,14 +19,12 @@ namespace Services
 	{
 		private readonly UsersDbContext _dbContext;
 		private readonly ICryptoEngineService _cryptoEngineService;
-		private readonly IHttpContextAccessor _httpContext;
 
 		public RecoverPasswordService(ICryptoEngineService cryptoEngineService,
-			UsersDbContext dbContext, IHttpContextAccessor httpContext)
+			UsersDbContext dbContext)
 		{
 			_cryptoEngineService = cryptoEngineService;
 			_dbContext = dbContext;
-			_httpContext = httpContext;
 		}
 
 		public async Task<RecoverPassword> GetRecoverPasswordAsync(Guid id)
@@ -75,6 +75,22 @@ namespace Services
 			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Email == recoverPassword.Email);
 			user.Password = _cryptoEngineService.Encrypt(command.Password, user.Id.ToString());
 			await _dbContext.SaveChangesAsync();
+		}
+
+		public async Task DeleteRecoverPasswordAsync(Guid id)
+		{
+			var entity = _dbContext.RecoverPasswords.FirstOrDefaultAsync(a => a.Id == id);
+			if (entity == null)
+			{
+				throw new UserException($"Given id for Recover Password is not found.", ErrorCodes.RecoverPasswordIdNotFound);
+			}
+			_dbContext.Remove(entity);
+			await _dbContext.SaveChangesAsync();
+		}
+
+		public async Task<IEnumerable<RecoverPassword>> GetRecoverPasswordsBeforeDateAsync(DateTime beforeDate)
+		{
+			return await _dbContext.RecoverPasswords.Where(a => a.DateAdded < beforeDate).ToListAsync();
 		}
 
 		private static string GenerateRandomText(int length)
