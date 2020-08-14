@@ -12,3 +12,5 @@ The available APIs include:
 - Creates a new user.
 - Authenticates a user.
 - Protected controller for testing role-based authorization.
+
+Enjoy!
