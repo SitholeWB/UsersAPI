@@ -12,6 +12,7 @@ using Models.Constants;
 using Models.Events;
 using Models.Settings;
 using Services;
+using Services.Background;
 using Services.DataLayer;
 using Services.Events;
 using Services.Events.Handles;
@@ -114,6 +115,10 @@ namespace UsersAPI
 			services.AddTransient<IOAuthProviderService, OAuthProviderService>();
 			services.AddTransient<IRecoverPasswordService, RecoverPasswordService>();
 			services.AddTransient<IUsersService, UsersService>();
+
+			//Background Service
+			//services.AddHostedService<QueuedHostedService>();
+			services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
 			//Events
 			services.AddTransient<EventHandlerContainer>();

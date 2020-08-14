@@ -41,6 +41,10 @@ namespace UsersAPI
 					{
 						// Set properties and call methods on options
 					}).UseStartup<Startup>();
-				}).ConfigureServices(services => services.AddHostedService<RecoverPasswordTimedHostedService>());
+				}).ConfigureServices(services =>
+				{
+					services.AddHostedService<RecoverPasswordTimedHostedService>();
+					services.AddHostedService<QueuedHostedService>();
+				});
 	}
 }

@@ -10,9 +10,9 @@ namespace Services.Events.Handles
 		public Task RunAsync(RecoverPasswordEvent obj)
 		{
 			return Task.Run(() =>
-			{
-				Console.WriteLine("Email to reset password sent.");
-			});
+		  {
+			  Console.WriteLine("Email to reset password sent.");
+		  });
 		}
 	}
 }

@@ -55,7 +55,7 @@ namespace Services
 			await _dbContext.AddAsync<RecoverPassword>(recoverPassword);
 			await _dbContext.SaveChangesAsync();
 
-			await _eventHandlerContainer.PublishAsync<RecoverPasswordEvent>(new RecoverPasswordEvent
+			_eventHandlerContainer.Publish<RecoverPasswordEvent>(new RecoverPasswordEvent
 			{
 				RecoverPassword = recoverPassword,
 				User = new MiniUser
@@ -88,7 +88,7 @@ namespace Services
 			user.Password = _cryptoEngineService.Encrypt(command.Password, user.Id.ToString());
 			await _dbContext.SaveChangesAsync();
 
-			await _eventHandlerContainer.PublishAsync<RecoverPasswordCompletedEvent>(new RecoverPasswordCompletedEvent
+			_eventHandlerContainer.Publish<RecoverPasswordCompletedEvent>(new RecoverPasswordCompletedEvent
 			{
 				RecoverPassword = recoverPassword,
 				User = new MiniUser

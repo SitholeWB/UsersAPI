@@ -1,5 +1,7 @@
 ﻿using Contracts;
+using Models.Entities;
 using Models.Events;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,10 +12,14 @@ namespace Services.Events
 	{
 		private readonly IServiceProvider _serviceProvider;
 		private static readonly Dictionary<Type, List<Type>> _mappings = new Dictionary<Type, List<Type>>();
+		private readonly IBackgroundTaskQueue _backgroundTaskQueue;
+		private readonly IErrorLogService _errorLogService;
 
-		public EventHandlerContainer(IServiceProvider serviceProvider)
+		public EventHandlerContainer(IServiceProvider serviceProvider, IBackgroundTaskQueue backgroundTaskQueue, IErrorLogService errorLogService)
 		{
 			_serviceProvider = serviceProvider;
+			_backgroundTaskQueue = backgroundTaskQueue;
+			_errorLogService = errorLogService;
 		}
 
 		public static void Subscribe<T, THandler>()
@@ -43,7 +49,13 @@ namespace Services.Events
 			}
 		}
 
-		public async Task PublishAsync<T>(T o) where T : EventBase
+		/// <summary>
+		/// Execute event/s in background thread, does not wait for all subscribers to finish execution.
+		/// NOTE: All subscribers will be awaited to finish execution in background.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="eventObject"></param>
+		public void Publish<T>(T eventObject) where T : EventBase
 		{
 			var name = typeof(T);
 
@@ -52,8 +64,47 @@ namespace Services.Events
 				foreach (var handler in _mappings[name])
 				{
 					var service = (IEventHandler<T>)_serviceProvider.GetService(handler);
+					_backgroundTaskQueue.QueueBackgroundWorkItem(async workItem =>
+					{
+						await service.RunAsync(eventObject);
+					});
+				}
+			}
+		}
 
-					await service.RunAsync(o);
+		/// <summary>
+		///Execute event/s in immediately, wait for all subscribers/handlers to finish execution.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="eventObject"></param>
+		/// <returns></returns>
+		public async Task PublishAsync<T>(T eventObject) where T : EventBase
+		{
+			var name = typeof(T);
+
+			if (_mappings.ContainsKey(name))
+			{
+				foreach (var handler in _mappings[name])
+				{
+					try
+					{
+						var service = (IEventHandler<T>)_serviceProvider.GetService(handler);
+						await service.RunAsync(eventObject);
+					}
+					catch (Exception ex)
+					{
+						await _errorLogService.AddErrorLogAsync(new ErrorLog
+						{
+							Id = Guid.NewGuid(),
+							DateAdded = DateTime.UtcNow,
+							LastModifiedDate = DateTime.UtcNow,
+							LocationInCode = $"{this.GetType().Name}_{ nameof(T)}",
+							Type = "EventExecution",
+							Exception = JsonConvert.SerializeObject(ex),
+							Message = ex.Message,
+							RequestDetails = JsonConvert.SerializeObject(eventObject)
+						});
+					}
 				}
 			}
 		}
