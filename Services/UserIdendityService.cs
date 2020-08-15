@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Models.Constants;
 using Models.DTOs;
 using Models.Entities;
+using Models.Enums;
+using Models.Exceptions;
 using Services.DataLayer;
 using System;
 using System.Linq;
@@ -32,8 +34,11 @@ namespace Services
 				return _applicationUser;
 			}
 			var userId = _context.HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier);
-			var user = await _dbContext.Users.FirstAsync(a => a.Id == Guid.Parse(userId.Value));
-
+			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == Guid.Parse(userId.Value));
+			if (user == null)
+			{
+				throw new UserException($"No User found for given token.", ErrorCodes.UserWithGivenIdNotFound);
+			}
 			_applicationUser = new ApplicationUser
 			{
 				AuthenticatedUser = user
