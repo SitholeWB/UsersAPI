@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
-using UsersAPI.Exceptions;
+using UsersAPI.Middlewares;
 
 namespace UsersAPI
 {
@@ -117,7 +117,6 @@ namespace UsersAPI
 			services.AddTransient<IUsersService, UsersService>();
 
 			//Background Service
-			//services.AddHostedService<QueuedHostedService>();
 			services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
 
 			//Events
@@ -215,6 +214,9 @@ namespace UsersAPI
 			app.UseRouting();
 
 			app.UseAuthorization();
+
+			app.UseMiddleware(typeof(RejectTokensBeforeDateHandlingMiddleware));
+
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();

@@ -11,7 +11,7 @@ namespace Contracts
 	{
 		Task<UserResponse> AddUserAsync(AddUserCommand userCommand);
 
-		Task<UserResponse> UpdateUserAsync(User user);
+		Task<UserResponse> UpdateUserAsync(Guid id, UpdateUserCommand command);
 
 		Task<UserResponse> GetUserByUsernameAsync(string username);
 
@@ -20,6 +20,8 @@ namespace Contracts
 		Task<UserResponse> GetUserAsync(Guid id);
 
 		Task<UserResponse> SetUserRoleAsync(Guid id, SetUserRoleCommand roleCommand);
+
+		Task<bool> SetUserPasswordAsync(Guid id, SetNewUserPasswordCommand command);
 
 		Task<IEnumerable<UserResponse>> GetUsersAsync();
 

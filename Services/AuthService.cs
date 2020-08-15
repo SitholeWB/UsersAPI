@@ -8,6 +8,7 @@ using Models.Enums;
 using Models.Exceptions;
 using Services.OAuthProviders;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Security.Claims;
@@ -72,43 +73,36 @@ namespace Services
 			{
 				throw new UserException($"No User found for given Id: {request.UserId}.", ErrorCodes.UserWithGivenIdNotFound);
 			}
-			var user = await _userIdendityService.GetApplicationUser();
+			var user = await _userIdendityService.GetApplicationUserAsync();
 			return GenerateJwtTokenForUser(user.AuthenticatedUser, AuthType.IMPERSONATE, impersonatedUser);
 		}
 
 		public async Task<TokenResponse> StopJwtTokenForImpersonatedUserAsync()
 		{
-			var user = await _userIdendityService.GetApplicationUser();
+			var user = await _userIdendityService.GetApplicationUserAsync();
 			return GenerateJwtTokenForUser(user.AuthenticatedUser, user.AuthenticatedUser.AccountAuth);
 		}
 
 		private TokenResponse GenerateJwtTokenForUser(User user, string accountAuth, User impersonatedUser = null)
 		{
 			var displayName = $"{user.Name} {user.Surname}";
-			var claims = new[]
+			var role = user.Role;
+			var claims = new List<Claim>
 			{
-					new Claim(ClaimTypes.Role, user.Role),
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 					new Claim(CustomClaimTypes.Status, user.Status),
-					new Claim(ClaimTypes.Name, displayName)
+					new Claim(CustomClaimTypes.CreatedDate, DateTime.UtcNow.ToString())
 			};
 			var expires = DateTime.UtcNow.AddDays(_settingsService.GetJwtAuth().ExpiresDays);
 			if (impersonatedUser != null)
 			{
 				displayName = $"Impersonated: {impersonatedUser.Name} {impersonatedUser.Surname}";
-				claims = new[]
-			{
-					new Claim(ClaimTypes.Role, impersonatedUser.Role),
-					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
-					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-					new Claim(CustomClaimTypes.Status, user.Status),
-					new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString()),
-					new Claim(ClaimTypes.Name, displayName)
-			};
+				role = impersonatedUser.Role;
 				expires = DateTime.UtcNow.AddDays(1);
+				claims.Add(new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString()));
 			}
-
+			claims.Add(new Claim(ClaimTypes.Role, role));
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settingsService.GetJwtAuth().SecurityKey));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

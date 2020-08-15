@@ -121,30 +121,46 @@ namespace Services
 			return user;
 		}
 
-		public async Task<UserResponse> UpdateUserAsync(User user)
+		public async Task<bool> SetUserPasswordAsync(Guid id, SetNewUserPasswordCommand command)
 		{
-			var authUser = await _userIdendityService.GetAuthorizedUser();
-			if (user.Id != authUser.Id && authUser.Role != UserRoles.ADMIN && authUser.Role != UserRoles.SUPER_ADMIN)
+			if (string.IsNullOrEmpty(command.Password))
+			{
+				return false;
+			}
+			var authUser = await _userIdendityService.GetAuthorizedUserAsync();
+			if (id != authUser.Id && authUser.Role != UserRoles.ADMIN && authUser.Role != UserRoles.SUPER_ADMIN)
+			{
+				throw new UserException("You are not allowed to update someone else account details.", ErrorCodes.NotAllowedToUpdateOtherUserData);
+			}
+			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+
+			entity.Password = _cryptoEngineService.Encrypt(command.Password, id.ToString());
+			entity.LastModifiedDate = DateTime.UtcNow;
+			entity.RejectTokensBeforeDate = DateTime.UtcNow;
+			_dbContext.Update<User>(entity);
+			await _dbContext.SaveChangesAsync();
+			return true;
+		}
+
+		public async Task<UserResponse> UpdateUserAsync(Guid id, UpdateUserCommand command)
+		{
+			var authUser = await _userIdendityService.GetAuthorizedUserAsync();
+			if (id != authUser.Id && authUser.Role != UserRoles.ADMIN && authUser.Role != UserRoles.SUPER_ADMIN)
 			{
 				throw new UserException("You are not allowed to update someone else account details.", ErrorCodes.NotAllowedToUpdateOtherUserData);
 			}
 
-			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == user.Id);
+			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
 			if (entity == null)
 			{
-				throw new UserException($"No User found for given Id: {user.Id}.", ErrorCodes.UserWithGivenIdNotFound);
+				throw new UserException($"No User found for given Id: {id}.", ErrorCodes.UserWithGivenIdNotFound);
 			}
-			entity.Name = user.Name;
-			entity.Surname = user.Surname;
+			entity.Name = command.Name;
+			entity.Surname = command.Surname;
 			entity.LastModifiedDate = DateTime.UtcNow;
-			entity.About = user.About;
-			entity.Status = user.Status;
-			entity.Role = user.Role;
-			entity.Country = user.Country;
-			if (!string.IsNullOrEmpty(user.Password))
-			{
-				entity.Password = _cryptoEngineService.Encrypt(user.Password, user.Id.ToString());
-			}
+			entity.About = command.About;
+			entity.Country = command.Country;
+
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
 			return ConvertUserToUserResponse(entity);

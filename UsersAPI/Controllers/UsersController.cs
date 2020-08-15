@@ -49,7 +49,7 @@ namespace UsersAPI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<UserResponse>> GetAuthorizedUser()
 		{
-			return Ok(await _userIdendityService.GetAuthorizedUser());
+			return Ok(await _userIdendityService.GetAuthorizedUserAsync());
 		}
 
 		[Authorize(Policy = Policy.ALL_ADMINS)]
@@ -68,17 +68,24 @@ namespace UsersAPI.Controllers
 			return Ok(await _usersService.AddUserAsync(user));
 		}
 
-		[Route("")]
+		[Route("{id}")]
 		[HttpPut]
-		public async Task<ActionResult<UserResponse>> UpdateUserAsync([FromBody] User user)
+		public async Task<ActionResult<UserResponse>> UpdateUserAsync([FromBody] UpdateUserCommand command, [FromRoute] Guid id)
 		{
-			return Ok(await _usersService.UpdateUserAsync(user));
+			return Ok(await _usersService.UpdateUserAsync(id, command));
+		}
+
+		[Route("{id}/passwords")]
+		[HttpPut]
+		public async Task<ActionResult<bool>> SetUserPasswordAsync([FromBody] SetNewUserPasswordCommand command, [FromRoute] Guid id)
+		{
+			return Ok(await _usersService.SetUserPasswordAsync(id, command));
 		}
 
 		[Authorize(Policy = Policy.SUPER_ADMIN)]
 		[Route("{id}/roles")]
 		[HttpPut]
-		public async Task<ActionResult<UserResponse>> UpdateUserAsync([FromBody] SetUserRoleCommand role, [FromRoute] Guid id)
+		public async Task<ActionResult<UserResponse>> SetUserRoleAsync([FromBody] SetUserRoleCommand role, [FromRoute] Guid id)
 		{
 			return Ok(await _usersService.SetUserRoleAsync(id, role));
 		}

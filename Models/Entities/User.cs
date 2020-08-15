@@ -1,6 +1,7 @@
 ﻿using Models.Constants;
 using Models.Enums;
 using Models.Exceptions;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -79,6 +80,8 @@ namespace Models.Entities
 
 		[Required]
 		public string Status { get; set; }
+
+		public DateTime? RejectTokensBeforeDate { get; set; }
 
 		//
 		[NotMapped]

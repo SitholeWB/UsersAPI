@@ -45,6 +45,9 @@ namespace Models.Enums
 
 		[Description("There is no Recover Password entry for given Id.")]
 		RecoverPasswordIdNotFound = 102,
+
+		[Description("Token has been rejected, create another new token.")]
+		TokenRejected = 103,
 	}
 
 	public enum ErrorTypes

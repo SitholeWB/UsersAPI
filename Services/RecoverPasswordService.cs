@@ -86,6 +86,7 @@ namespace Services
 
 			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Email == recoverPassword.Email);
 			user.Password = _cryptoEngineService.Encrypt(command.Password, user.Id.ToString());
+			user.RejectTokensBeforeDate = DateTime.UtcNow;
 			await _dbContext.SaveChangesAsync();
 
 			_eventHandlerContainer.Publish<RecoverPasswordCompletedEvent>(new RecoverPasswordCompletedEvent
@@ -102,7 +103,7 @@ namespace Services
 
 		public async Task DeleteRecoverPasswordAsync(Guid id)
 		{
-			var entity = _dbContext.RecoverPasswords.FirstOrDefaultAsync(a => a.Id == id);
+			var entity = await _dbContext.RecoverPasswords.FirstOrDefaultAsync(a => a.Id == id);
 			if (entity == null)
 			{
 				throw new UserException($"Given id for Recover Password is not found.", ErrorCodes.RecoverPasswordIdNotFound);

@@ -10,7 +10,7 @@ using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace UsersAPI.Exceptions
+namespace UsersAPI.Middlewares
 {
 	public class ErrorHandlingMiddleware
 	{

@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Models.Constants;
 using Models.DTOs;
 using Models.Entities;
 using Services.DataLayer;
@@ -24,7 +25,7 @@ namespace Services
 			_dbContext = dbContext;
 		}
 
-		public async Task<ApplicationUser> GetApplicationUser()
+		public async Task<ApplicationUser> GetApplicationUserAsync()
 		{
 			if (_applicationUser != null)
 			{
@@ -38,7 +39,7 @@ namespace Services
 				AuthenticatedUser = user
 			};
 
-			var impersonatedUserId = _context.HttpContext.User.Claims.FirstOrDefault(a => a.Type == "ImpersonatedUserId");
+			var impersonatedUserId = _context.HttpContext.User.Claims.FirstOrDefault(a => a.Type == CustomClaimTypes.ImpersonatedUserId);
 			if (impersonatedUserId != null)
 			{
 				_applicationUser.ImpersonatedUser = await _dbContext.Users.FirstAsync(a => a.Id == Guid.Parse(impersonatedUserId.Value));
@@ -46,9 +47,9 @@ namespace Services
 			return _applicationUser;
 		}
 
-		public async Task<User> GetAuthorizedUser()
+		public async Task<User> GetAuthorizedUserAsync()
 		{
-			var appUser = await GetApplicationUser();
+			var appUser = await GetApplicationUserAsync();
 			return appUser.ImpersonatedUser ?? appUser.AuthenticatedUser;
 		}
 

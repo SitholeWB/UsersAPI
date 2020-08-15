@@ -7,8 +7,8 @@ namespace Contracts
 {
 	public interface IUserIdendityService : IDisposable
 	{
-		Task<ApplicationUser> GetApplicationUser();
+		Task<ApplicationUser> GetApplicationUserAsync();
 
-		Task<User> GetAuthorizedUser();
+		Task<User> GetAuthorizedUserAsync();
 	}
 }

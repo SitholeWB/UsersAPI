@@ -203,7 +203,7 @@ namespace Services.Tests
 			var user1 = await service.AddUserAsync(new AddUserCommand { Email = "user1@zululand.co.za", Name = "Welcome One", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user2@zululand.co.za", Name = "Welcome Two", Surname = "Sithole", Gender = "Male" });
 			await service.AddUserAsync(new AddUserCommand { Email = "user3@zululand.co.za", Name = "Welcome Three", Surname = "Sithole", Gender = "Male" });
-			userIdendityService.GetAuthorizedUser().Returns<User>(new User
+			userIdendityService.GetAuthorizedUserAsync().Returns<User>(new User
 			{
 				Role = UserRoles.ADMIN
 			});
