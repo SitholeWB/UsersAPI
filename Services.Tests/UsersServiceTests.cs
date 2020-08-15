@@ -208,7 +208,7 @@ namespace Services.Tests
 				Role = UserRoles.ADMIN
 			});
 			//Act
-			var results = await service.UpdateUserAsync(new User { Id = user1.Id, Email = "user1@zululand.co.za", Name = "UpdatedName", Surname = "UpdateSurname", Role = "ADMIN" });
+			var results = await service.UpdateUserAsync(user1.Id, new UpdateUserCommand { Email = "user1@zululand.co.za", Name = "UpdatedName", Surname = "UpdateSurname", About = "I love banana" });
 			var resultsUpdated = await service.GetUserAsync(user1.Id);
 
 			//Assert
@@ -217,13 +217,13 @@ namespace Services.Tests
 			Assert.AreEqual(results.Email, user1.Email);
 			Assert.AreEqual("UpdatedName", results.Name);
 			Assert.AreEqual("UpdateSurname", results.Surname);
-			Assert.AreEqual("ADMIN", results.Role);
+			Assert.AreEqual("I love banana", results.About);
 
 			//Get User by Id should return Updated User
 			Assert.AreEqual(user1.Email, resultsUpdated.Email);
 			Assert.AreEqual("UpdatedName", resultsUpdated.Name);
 			Assert.AreEqual("UpdateSurname", resultsUpdated.Surname);
-			Assert.AreEqual("ADMIN", resultsUpdated.Role);
+			Assert.AreEqual("I love banana", resultsUpdated.About);
 		}
 
 		private UsersDbContext GetDatabaseContext()
