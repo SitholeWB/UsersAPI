@@ -176,8 +176,14 @@ namespace UsersAPI
 
 			services.AddAuthorization(options =>
 			{
+				options.AddPolicy(Policy.MANAGER,
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.MANAGER));
+			});
+
+			services.AddAuthorization(options =>
+			{
 				options.AddPolicy(Policy.EVERYONE,
-					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.DEVELOPER, UserRoles.GENERAL, UserRoles.SUPER_ADMIN, UserRoles.ADMIN));
+					 policy => policy.RequireClaim(ClaimTypes.Role, UserRoles.DEVELOPER, UserRoles.GENERAL, UserRoles.SUPER_ADMIN, UserRoles.ADMIN, UserRoles.MANAGER));
 			});
 
 			services.AddControllers();
