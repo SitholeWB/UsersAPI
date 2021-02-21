@@ -33,7 +33,12 @@ namespace Services
 			{
 				return _applicationUser;
 			}
-			var userId = _context.HttpContext.User.Claims.First(a => a.Type == ClaimTypes.NameIdentifier);
+			if (!_context.HttpContext.User.Identity.IsAuthenticated)
+			{
+				throw new UserException($"User is not authenticated.", ErrorCodes.UserIsNotAuthenticated);
+			}
+
+			var userId = _context.HttpContext.User.Claims.FirstOrDefault(a => a.Type == ClaimTypes.NameIdentifier);
 			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == Guid.Parse(userId.Value));
 			if (user == null)
 			{

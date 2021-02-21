@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models.Entities
@@ -6,6 +7,8 @@ namespace Models.Entities
 	[Table("OAuthProviders")]
 	public class OAuthProvider : BaseEntity // Id on this table should be the User Id
 	{
+		public Guid UserId { get; set; }
+
 		[MaxLength(100)]
 		[Required]
 		public string ProviderName { get; set; }
@@ -16,5 +19,8 @@ namespace Models.Entities
 
 		[MaxLength(int.MaxValue)]
 		public string DataJson { get; set; }
+
+		[ForeignKey("UserId")]
+		public virtual User User { get; set; }
 	}
 }

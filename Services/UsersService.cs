@@ -166,6 +166,21 @@ namespace Services
 			return ConvertUserToUserResponse(entity);
 		}
 
+		public async Task<UserResponse> UpdateUserSocialLoginDataAsync(Guid id, UpdateUserSocialLoginCommand command)
+		{
+			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+			if (entity == null)
+			{
+				throw new UserException($"No User found for given Id: {id}.", ErrorCodes.UserWithGivenIdNotFound);
+			}
+			entity.FacebookJsonData = command.FacebookJsonData;
+			entity.LastModifiedDate = DateTime.UtcNow;
+
+			_dbContext.Update<User>(entity);
+			await _dbContext.SaveChangesAsync();
+			return ConvertUserToUserResponse(entity);
+		}
+
 		#region private methods
 
 		private static UserResponse ConvertUserToUserResponse(User userEntity)

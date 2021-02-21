@@ -5,6 +5,7 @@ using Models.DTOs.Facebook;
 using Models.Entities;
 using Models.Enums;
 using Models.Exceptions;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -38,6 +39,14 @@ namespace Services.OAuthProviders
 			// 4. ready to create the local user account (if necessary) and JWT
 			var user = await usersService.GetUserEntityByInputAsync(email: userInfo.Email);
 
+			var facebookDataJson = JsonSerializer.Serialize(new FacebookDto
+			{
+				FacebookUserData = userInfo,
+				FacebookUserAccessTokenValidation = userAccessTokenValidation,
+				FacebookAppAccessToken = appAccessToken,
+				FacebookAuthViewModel = model
+			});
+
 			if (user == null)
 			{
 				var appUser = new AddUserCommand
@@ -56,6 +65,7 @@ namespace Services.OAuthProviders
 				{
 					throw new UserException("Failed to create user from Facebook token.", ErrorCodes.FailedToCreateUserFromFacebookToken);
 				}
+
 				user = new User
 				{
 					About = result.About,
@@ -71,22 +81,22 @@ namespace Services.OAuthProviders
 					Username = result.Username,
 					Role = result.Role,
 					Status = result.Status,
+					FacebookJsonData = facebookDataJson
 				};
-				await authProviderService.AddOAuthProviderAsync(new OAuthProvider
-				{
-					Email = userInfo.Email,
-					ProviderName = AuthType.FACEBOOK,
-					Id = result.Id,
-					DataJson = JsonSerializer.Serialize(new FacebookDto
-					{
-						FacebookUserData = userInfo,
-						FacebookUserAccessTokenValidation = userAccessTokenValidation,
-						FacebookAppAccessToken = appAccessToken,
-						FacebookAuthViewModel = model
-					})
-				});
 			}
 
+			await usersService.UpdateUserSocialLoginDataAsync(user.Id, new UpdateUserSocialLoginCommand
+			{
+				FacebookJsonData = facebookDataJson
+			});
+			await authProviderService.AddOAuthProviderAsync(new OAuthProvider
+			{
+				Email = userInfo.Email,
+				ProviderName = AuthType.FACEBOOK,
+				Id = Guid.NewGuid(),
+				UserId = user.Id,
+				DataJson = facebookDataJson
+			});
 			return user;
 		}
 	}

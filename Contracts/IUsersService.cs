@@ -13,6 +13,8 @@ namespace Contracts
 
 		Task<UserResponse> UpdateUserAsync(Guid id, UpdateUserCommand command);
 
+		Task<UserResponse> UpdateUserSocialLoginDataAsync(Guid id, UpdateUserSocialLoginCommand command);
+
 		Task<UserResponse> GetUserByUsernameAsync(string username);
 
 		Task<UserResponse> GetUserByEmailAsync(string email);

@@ -2,6 +2,7 @@
 using Models.Enums;
 using Models.Exceptions;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -83,6 +84,9 @@ namespace Models.Entities
 
 		public DateTime? RejectTokensBeforeDate { get; set; }
 
+		[MaxLength(int.MaxValue)]
+		public string FacebookJsonData { get; set; }
+
 		//
 		[NotMapped]
 		[JsonIgnore]
@@ -95,5 +99,7 @@ namespace Models.Entities
 		[NotMapped]
 		[JsonIgnore]
 		private string Username_Private { get; set; }
+
+		public virtual ICollection<OAuthProvider> OAuthProviders { get; set; }
 	}
 }

@@ -48,6 +48,9 @@ namespace Models.Enums
 
 		[Description("Token has been rejected, create another new token.")]
 		TokenRejected = 103,
+
+		[Description("User must be authenticated.")]
+		UserIsNotAuthenticated = 104,
 	}
 
 	public enum ErrorTypes
