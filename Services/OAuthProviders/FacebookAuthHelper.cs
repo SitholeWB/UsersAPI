@@ -56,7 +56,22 @@ namespace Services.OAuthProviders
 				{
 					throw new UserException("Failed to create user from Facebook token.", ErrorCodes.FailedToCreateUserFromFacebookToken);
 				}
-
+				user = new User
+				{
+					About = result.About,
+					AccountAuth = result.AccountAuth,
+					Country = result.Country,
+					DateAdded = result.DateAdded,
+					Email = result.Email,
+					Gender = result.Gender,
+					Id = result.Id,
+					LastModifiedDate = result.LastModifiedDate,
+					Name = result.Name,
+					Surname = result.Surname,
+					Username = result.Username,
+					Role = result.Role,
+					Status = result.Status,
+				};
 				await authProviderService.AddOAuthProviderAsync(new OAuthProvider
 				{
 					Email = userInfo.Email,
