@@ -7,6 +7,7 @@ using Models.Entities;
 using Models.Enums;
 using Models.Exceptions;
 using Services.DataLayer;
+using Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,22 +69,22 @@ namespace Services
 			}
 			var entity = await _dbContext.AddAsync<User>(user);
 			await _dbContext.SaveChangesAsync();
-			return ConvertUserToUserResponse(entity.Entity);
+			return UserModelsHelper.ConvertUserToUserResponse(entity.Entity);
 		}
 
 		public async Task<UserResponse> GetUserAsync(Guid id)
 		{
-			return ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id));
+			return UserModelsHelper.ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id));
 		}
 
 		public async Task<UserResponse> GetUserByEmailAsync(string email)
 		{
-			return ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Email == email.ToLower()));
+			return UserModelsHelper.ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Email == email.ToLower()));
 		}
 
 		public async Task<UserResponse> GetUserByUsernameAsync(string username)
 		{
-			return ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username.ToLower()));
+			return UserModelsHelper.ConvertUserToUserResponse(await _dbContext.Users?.AsNoTracking().FirstOrDefaultAsync(a => a.Username == username.ToLower()));
 		}
 
 		public async Task<UserResponse> SetUserRoleAsync(Guid id, SetUserRoleCommand roleCommand)
@@ -92,12 +93,12 @@ namespace Services
 			entity.Role = roleCommand.Role;
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
-			return ConvertUserToUserResponse(entity);
+			return UserModelsHelper.ConvertUserToUserResponse(entity);
 		}
 
 		public async Task<IEnumerable<UserResponse>> GetUsersAsync()
 		{
-			return (await _dbContext.Users?.AsNoTracking().ToListAsync()).Select(a => ConvertUserToUserResponse(a));
+			return (await _dbContext.Users?.AsNoTracking().ToListAsync()).Select(a => UserModelsHelper.ConvertUserToUserResponse(a));
 		}
 
 		public async Task<User> GetUserEntityByInputAsync(string email = null, string username = null, Guid? id = null)
@@ -163,7 +164,7 @@ namespace Services
 
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
-			return ConvertUserToUserResponse(entity);
+			return UserModelsHelper.ConvertUserToUserResponse(entity);
 		}
 
 		public async Task<UserResponse> UpdateUserSocialLoginDataAsync(Guid id, UpdateUserSocialLoginCommand command)
@@ -178,35 +179,7 @@ namespace Services
 
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
-			return ConvertUserToUserResponse(entity);
+			return UserModelsHelper.ConvertUserToUserResponse(entity);
 		}
-
-		#region private methods
-
-		private static UserResponse ConvertUserToUserResponse(User userEntity)
-		{
-			if (userEntity == null)
-			{
-				return null;
-			}
-			return new UserResponse
-			{
-				About = userEntity.About,
-				AccountAuth = userEntity.AccountAuth,
-				Country = userEntity.Country,
-				DateAdded = userEntity.DateAdded,
-				Email = userEntity.Email,
-				Gender = userEntity.Gender,
-				Id = userEntity.Id,
-				LastModifiedDate = userEntity.LastModifiedDate,
-				Name = userEntity.Name,
-				Role = userEntity.Role,
-				Status = userEntity.Status,
-				Surname = userEntity.Surname,
-				Username = userEntity.Username,
-			};
-		}
-
-		#endregion private methods
 	}
 }

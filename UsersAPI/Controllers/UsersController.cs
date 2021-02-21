@@ -5,6 +5,7 @@ using Models.Commands;
 using Models.Commands.Responses;
 using Models.Constants;
 using Models.Entities;
+using Services.Helpers;
 using System;
 using System.Threading.Tasks;
 
@@ -49,7 +50,8 @@ namespace UsersAPI.Controllers
 		[HttpGet]
 		public async Task<ActionResult<UserResponse>> GetAuthorizedUser()
 		{
-			return Ok(await _userIdendityService.GetAuthorizedUserAsync());
+			var user = await _userIdendityService.GetAuthorizedUserAsync();
+			return base.Ok(UserModelsHelper.ConvertUserToUserResponse(user));
 		}
 
 		[Authorize(Policy = Policy.ALL_ADMINS)]
