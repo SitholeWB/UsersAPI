@@ -18,8 +18,8 @@ namespace Services
 
 		public async Task<OAuthProvider> AddOAuthProviderAsync(OAuthProvider authProvider)
 		{
-			authProvider.DateAdded = DateTime.UtcNow;
-			authProvider.LastModifiedDate = DateTime.UtcNow;
+			authProvider.DateAdded = DateTimeOffset.UtcNow;
+			authProvider.LastModifiedDate = DateTimeOffset.UtcNow;
 
 			var entity = await _dbContext.AddAsync<OAuthProvider>(authProvider);
 			await _dbContext.SaveChangesAsync();
@@ -44,7 +44,7 @@ namespace Services
 				entity = await GetOAuthProviderByEmailAsync(authProvider.Email);
 			}
 			entity.ProviderName = authProvider.ProviderName;
-			entity.LastModifiedDate = DateTime.UtcNow;
+			entity.LastModifiedDate = DateTimeOffset.UtcNow;
 			entity.DataJson = authProvider.DataJson;
 
 			_dbContext.Update<OAuthProvider>(entity);

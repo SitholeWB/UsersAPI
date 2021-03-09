@@ -115,6 +115,8 @@ namespace UsersAPI
 			services.AddTransient<IOAuthProviderService, OAuthProviderService>();
 			services.AddTransient<IRecoverPasswordService, RecoverPasswordService>();
 			services.AddTransient<IUsersService, UsersService>();
+			services.AddTransient<IRoleService, RoleService>();
+			services.AddTransient<IUserRoleService, UserRoleService>();
 
 			//Background Service
 			services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();

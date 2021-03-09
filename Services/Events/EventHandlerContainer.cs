@@ -96,8 +96,8 @@ namespace Services.Events
 						await _errorLogService.AddErrorLogAsync(new ErrorLog
 						{
 							Id = Guid.NewGuid(),
-							DateAdded = DateTime.UtcNow,
-							LastModifiedDate = DateTime.UtcNow,
+							DateAdded = DateTimeOffset.UtcNow,
+							LastModifiedDate = DateTimeOffset.UtcNow,
 							LocationInCode = $"{this.GetType().Name}_{ nameof(T)}",
 							Type = "EventExecution",
 							Exception = JsonConvert.SerializeObject(ex),

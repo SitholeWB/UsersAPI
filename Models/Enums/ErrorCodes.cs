@@ -29,6 +29,9 @@ namespace Models.Enums
 		[Description("Reset password link has expired.")]
 		ResetPasswordLinkExpired = 17,
 
+		[Description("Role name is required.")]
+		RoleNameIsRequired = 18,
+
 		//Not Found from 51 to 100
 		[Description("User with given email address does not exist on the system.")]
 		UserWithGivenEmailNotFound = 51,
@@ -38,6 +41,12 @@ namespace Models.Enums
 
 		[Description("User with given Id does not exist on the system.")]
 		UserWithGivenIdNotFound = 53,
+
+		[Description("Role with given Id does not exist on the system.")]
+		RoleWithGivenIdNotFound = 54,
+
+		[Description("UserRole with given Id does not exist on the system.")]
+		UserRoleWithGivenIdNotFound = 55,
 
 		//Forbidden from 101 to 150
 		[Description("User not allowed to update information for other users.")]

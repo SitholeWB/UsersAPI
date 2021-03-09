@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Microsoft.IdentityModel.Tokens;
+using Models.Commands.Responses;
 using Models.Constants;
 using Models.DTOs.Auth;
 using Models.DTOs.Facebook;
@@ -10,6 +11,7 @@ using Services.OAuthProviders;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
@@ -25,9 +27,10 @@ namespace Services
 		private readonly IOAuthProviderService _authProviderService;
 		private readonly IUserIdendityService _userIdendityService;
 		private readonly HttpClient _httpClient;
+		private readonly IUserRoleService _userRoleService;
 
 		public AuthService(IUsersService usersService, ISettingsService settingsService, ICryptoEngineService cryptoEngineService,
-			IOAuthProviderService authProviderService, HttpClient httpClient, IUserIdendityService userIdendityService)
+			IOAuthProviderService authProviderService, HttpClient httpClient, IUserIdendityService userIdendityService, IUserRoleService userRoleService)
 		{
 			_usersService = usersService;
 			_settingsService = settingsService;
@@ -35,12 +38,13 @@ namespace Services
 			_authProviderService = authProviderService;
 			_httpClient = httpClient;
 			_userIdendityService = userIdendityService;
+			_userRoleService = userRoleService;
 		}
 
 		public async Task<TokenResponse> GetFacebookJwtTokeAsync(FacebookAuthViewModel model)
 		{
 			var user = await FacebookAuthHelper.GetFacebookJwtTokeAsync(model, _usersService, _settingsService, _authProviderService, _httpClient);
-			return GenerateJwtTokenForUser(user, AuthType.FACEBOOK);
+			return await GenerateJwtTokenForUser(user, AuthType.FACEBOOK);
 		}
 
 		public async Task<TokenResponse> GetJwtTokeAsync(TokenRequest tokenRequest)
@@ -60,7 +64,7 @@ namespace Services
 
 			if (user.Email == tokenRequest.Email && password == tokenRequest.password)
 			{
-				return GenerateJwtTokenForUser(user, AuthType.USERS_API);
+				return await GenerateJwtTokenForUser(user, AuthType.USERS_API);
 			}
 
 			throw new UserException($"Given Email \"{tokenRequest.Email}\" is not found or Password is incorrect.", ErrorCodes.GivenEmailOrPasswordIsIncorrect);
@@ -74,17 +78,19 @@ namespace Services
 				throw new UserException($"No User found for given Id: {request.UserId}.", ErrorCodes.UserWithGivenIdNotFound);
 			}
 			var user = await _userIdendityService.GetApplicationUserAsync();
-			return GenerateJwtTokenForUser(user.AuthenticatedUser, AuthType.IMPERSONATE, impersonatedUser);
+			return await GenerateJwtTokenForUser(user.AuthenticatedUser, AuthType.IMPERSONATE, impersonatedUser);
 		}
 
 		public async Task<TokenResponse> StopJwtTokenForImpersonatedUserAsync()
 		{
 			var user = await _userIdendityService.GetApplicationUserAsync();
-			return GenerateJwtTokenForUser(user.AuthenticatedUser, user.AuthenticatedUser.AccountAuth);
+			return await GenerateJwtTokenForUser(user.AuthenticatedUser, user.AuthenticatedUser.AccountAuth);
 		}
 
-		private TokenResponse GenerateJwtTokenForUser(User user, string accountAuth, User impersonatedUser = null)
+		private async Task<TokenResponse> GenerateJwtTokenForUser(User user, string accountAuth, User impersonatedUser = null)
 		{
+			var userId = impersonatedUser?.Id ?? user.Id;
+			var userRoles = await _userRoleService.GetUserRolesForUserIdAsync(userId);
 			var displayName = $"{user.Name} {user.Surname}";
 			var role = user.Role;
 			var claims = new List<Claim>
@@ -92,7 +98,7 @@ namespace Services
 					new Claim(ClaimTypes.AuthenticationMethod, accountAuth),
 					new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
 					new Claim(CustomClaimTypes.Status, user.Status),
-					new Claim(CustomClaimTypes.CreatedDate, DateTime.UtcNow.ToString())
+					new Claim(CustomClaimTypes.CreatedDate, DateTimeOffset.UtcNow.ToString())
 			};
 			var expires = DateTime.UtcNow.AddDays(_settingsService.GetJwtAuth().ExpiresDays);
 			if (impersonatedUser != null)
@@ -103,6 +109,11 @@ namespace Services
 				claims.Add(new Claim(CustomClaimTypes.ImpersonatedUserId, impersonatedUser.Id.ToString()));
 			}
 			claims.Add(new Claim(ClaimTypes.Role, role));
+			foreach (var userRole in userRoles ?? Enumerable.Empty<UserRoleResponse>())
+			{
+				claims.Add(new Claim(ClaimTypes.Role, userRole.RoleName));
+			}
+
 			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settingsService.GetJwtAuth().SecurityKey));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 

@@ -51,12 +51,12 @@ namespace UsersAPI.Middlewares
 				var errorType = (exception is UserException) ? ErrorTypes.UserException : ErrorTypes.Unexpected;
 				await _errorLogService.AddErrorLogAsync(new ErrorLog
 				{
-					DateAdded = DateTime.UtcNow,
+					DateAdded = DateTimeOffset.UtcNow,
 					Exception = JsonSerializer.Serialize(exception),
 					LocationInCode = $"{exception.Source}",
 					Message = $"Error: {exception.Message}",
 					Id = Guid.NewGuid(),
-					LastModifiedDate = DateTime.UtcNow,
+					LastModifiedDate = DateTimeOffset.UtcNow,
 					Type = errorType.ToString(),
 					RequestDetails = JsonSerializer.Serialize(new
 					{

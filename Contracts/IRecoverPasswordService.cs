@@ -16,6 +16,6 @@ namespace Contracts
 
 		Task DeleteRecoverPasswordAsync(Guid id);
 
-		Task<IEnumerable<RecoverPassword>> GetRecoverPasswordsBeforeDateAsync(DateTime beforeDate);
+		Task<IEnumerable<RecoverPassword>> GetRecoverPasswordsBeforeDateAsync(DateTimeOffset beforeDate);
 	}
 }

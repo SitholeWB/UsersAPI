@@ -82,7 +82,7 @@ namespace Models.Entities
 		[Required]
 		public string Status { get; set; }
 
-		public DateTime? RejectTokensBeforeDate { get; set; }
+		public DateTimeOffset? RejectTokensBeforeDate { get; set; }
 
 		[MaxLength(int.MaxValue)]
 		public string FacebookJsonData { get; set; }
@@ -101,5 +101,7 @@ namespace Models.Entities
 		private string Username_Private { get; set; }
 
 		public virtual ICollection<OAuthProvider> OAuthProviders { get; set; }
+
+		public virtual ICollection<UserRole> UserRoles { get; set; }
 	}
 }

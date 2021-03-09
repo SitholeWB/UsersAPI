@@ -21,8 +21,8 @@ namespace Services
 		public async Task AddErrorLogAsync(ErrorLog errorLog)
 		{
 			errorLog.Id = Guid.NewGuid();
-			errorLog.DateAdded = DateTime.UtcNow;
-			errorLog.LastModifiedDate = DateTime.UtcNow;
+			errorLog.DateAdded = DateTimeOffset.UtcNow;
+			errorLog.LastModifiedDate = DateTimeOffset.UtcNow;
 			await _dbContext.AddAsync<ErrorLog>(errorLog);
 			await _dbContext.SaveChangesAsync();
 		}

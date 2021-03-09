@@ -33,9 +33,9 @@ namespace Services
 			var user = new User
 			{
 				Id = Guid.NewGuid(),
-				DateAdded = DateTime.UtcNow,
+				DateAdded = DateTimeOffset.UtcNow,
 				Role = UserRoles.GENERAL,
-				LastModifiedDate = DateTime.UtcNow,
+				LastModifiedDate = DateTimeOffset.UtcNow,
 				Name = userCommand.Name,
 				Surname = userCommand.Surname,
 				Email = userCommand.Email,
@@ -136,8 +136,8 @@ namespace Services
 			var entity = await _dbContext.Users.FirstOrDefaultAsync(a => a.Id == id);
 
 			entity.Password = _cryptoEngineService.Encrypt(command.Password, id.ToString());
-			entity.LastModifiedDate = DateTime.UtcNow;
-			entity.RejectTokensBeforeDate = DateTime.UtcNow;
+			entity.LastModifiedDate = DateTimeOffset.UtcNow;
+			entity.RejectTokensBeforeDate = DateTimeOffset.UtcNow;
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();
 			return true;
@@ -158,7 +158,7 @@ namespace Services
 			}
 			entity.Name = command.Name;
 			entity.Surname = command.Surname;
-			entity.LastModifiedDate = DateTime.UtcNow;
+			entity.LastModifiedDate = DateTimeOffset.UtcNow;
 			entity.About = command.About;
 			entity.Country = command.Country;
 
@@ -175,7 +175,7 @@ namespace Services
 				throw new UserException($"No User found for given Id: {id}.", ErrorCodes.UserWithGivenIdNotFound);
 			}
 			entity.FacebookJsonData = command.FacebookJsonData;
-			entity.LastModifiedDate = DateTime.UtcNow;
+			entity.LastModifiedDate = DateTimeOffset.UtcNow;
 
 			_dbContext.Update<User>(entity);
 			await _dbContext.SaveChangesAsync();

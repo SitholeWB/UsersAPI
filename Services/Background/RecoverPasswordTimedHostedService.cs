@@ -29,7 +29,7 @@ namespace Services.Background
 
 		private async Task DeleteExpiredRecoverPasswordsAsync()
 		{
-			var date = DateTime.UtcNow.AddHours(-24);
+			var date = DateTimeOffset.UtcNow.AddHours(-24);
 			using var scope = _scopeFactory.CreateScope();
 			var _recoverPasswordService = scope.ServiceProvider.GetRequiredService<IRecoverPasswordService>();
 			var recoverPasswords = await _recoverPasswordService.GetRecoverPasswordsBeforeDateAsync(date);

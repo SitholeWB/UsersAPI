@@ -46,9 +46,9 @@ namespace Services
 			var recoverPassword = new RecoverPassword
 			{
 				Email = command.Email,
-				DateAdded = DateTime.UtcNow,
+				DateAdded = DateTimeOffset.UtcNow,
 				Id = Guid.NewGuid(),
-				LastModifiedDate = DateTime.UtcNow
+				LastModifiedDate = DateTimeOffset.UtcNow
 			};
 			var hash = _cryptoEngineService.Encrypt(randomKey, recoverPassword.Id.ToString());
 			recoverPassword.Hash = RemoveSpecialCharsFromHash(hash);
@@ -79,14 +79,14 @@ namespace Services
 				throw new UserException($"Link to reset password not valid.", ErrorCodes.ResetPasswordLinkInValid);
 			}
 
-			if (recoverPassword.DateAdded.AddHours(24) < DateTime.UtcNow)
+			if (recoverPassword.DateAdded.AddHours(24) < DateTimeOffset.UtcNow)
 			{
 				throw new UserException($"Link to reset password has expired.", ErrorCodes.ResetPasswordLinkExpired);
 			}
 
 			var user = await _dbContext.Users.FirstOrDefaultAsync(a => a.Email == recoverPassword.Email);
 			user.Password = _cryptoEngineService.Encrypt(command.Password, user.Id.ToString());
-			user.RejectTokensBeforeDate = DateTime.UtcNow;
+			user.RejectTokensBeforeDate = DateTimeOffset.UtcNow;
 			await _dbContext.SaveChangesAsync();
 
 			_eventHandlerContainer.Publish<RecoverPasswordCompletedEvent>(new RecoverPasswordCompletedEvent
@@ -112,7 +112,7 @@ namespace Services
 			await _dbContext.SaveChangesAsync();
 		}
 
-		public async Task<IEnumerable<RecoverPassword>> GetRecoverPasswordsBeforeDateAsync(DateTime beforeDate)
+		public async Task<IEnumerable<RecoverPassword>> GetRecoverPasswordsBeforeDateAsync(DateTimeOffset beforeDate)
 		{
 			return await _dbContext.RecoverPasswords.Where(a => a.DateAdded < beforeDate).ToListAsync();
 		}
